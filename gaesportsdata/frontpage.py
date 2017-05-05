@@ -1,10 +1,9 @@
-#usr/bin/python
 # -*- coding: utf-8 -*-
 
-from flask import Blueprint
+from flask import Blueprint, render_template
 
 app = Blueprint('frontpage', __name__)
 
 @app.route('/')
-def hello():
-    return 'Hello from the frontpage.py!'
+def frontpage():
+    return render_template('frontpage.html', sports=['NHL'])

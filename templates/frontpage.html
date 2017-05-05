@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="home-navigation">
+  <div class="row">
+  
+    {% for sport in sports %}
+    <div class="col">
+      <a class="text-icon" href="{{ sport }}">{{ sport }}</a>
+    </div>
+  
+      {% if loop.index is divisibleby(2) and not loop.last %}
+      </div><div class="row">
+      {% endif %}
+  
+    {% endfor %}
+    
+  </div>
+</div>
+{% endblock %}

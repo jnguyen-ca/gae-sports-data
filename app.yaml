@@ -3,9 +3,13 @@ api_version: 1
 threadsafe: true
 
 handlers:
+- url: /static
+  static_dir: static
+- url: /scrape/.*
+  script: main.app
+  login: admin
 - url: /.*
   script: main.app
-  login: required
   
 libraries:
 - name: jinja2

@@ -6,4 +6,5 @@ app = Blueprint('frontpage', __name__)
 
 @app.route('/')
 def frontpage():
+    # aka navigation page
     return render_template('frontpage.html', sports=['NHL'])

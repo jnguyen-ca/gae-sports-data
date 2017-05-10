@@ -12,7 +12,17 @@ from . import app
 @app.route('/')
 def frontpage():
     # aka navigation page
-    return flask.render_template('frontpage.html', sports=['NHL'])
+    return flask.render_template('frontpage.html', leagues=['NHL'])
+
+@app.route('/<league_id>')
+def league_page(league_id):
+    if league_id.upper() == 'NHL':
+        return flask.render_template('league_page.html', 
+                                        league_title=league_id,
+                                        games=models.ApplicationVariable.get_app_var('nhl')
+                                    )
+    
+    return '404 Not Found', 404
 
 @app.route('/scrape/<league_id>')
 def scrape_league(league_id):

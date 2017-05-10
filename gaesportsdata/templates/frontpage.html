@@ -6,9 +6,9 @@
 <div class="home-navigation">
   <div class="row">
   
-    {% for sport in sports %}
-    <div class="col">
-      <a class="text-icon" href="{{ sport }}">{{ sport }}</a>
+    {% for league in leagues %}
+    <div class="col league-icon">
+      <a class="text-icon {{ league }}-icon" href="{{ league }}">{{ league }}</a>
     </div>
   
       {% if loop.index is divisibleby(2) and not loop.last %}

@@ -77,7 +77,7 @@ class NHLScrape(object):
             for game_dict in date_data['games']:
                 game = NHLGame()
                 
-                game.datetime = datetime.strptime(game_dict['gameDate'],'%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=pytz.utc)
+                game.datetime = datetime.strptime(game_dict['gameDate'],'%Y-%m-%dT%H:%M:%SZ')
         
                 game.sport = 'Hockey'
                 game.league = 'NHL'
@@ -92,4 +92,4 @@ class NHLScrape(object):
                 
                 games.append(game)
             
-        return games        
+        return games

@@ -7,6 +7,15 @@ body {
 	    "Droid Sans", "Helvetica Neue", sans-serif;
 }
 
+.container {
+	padding: 0 4vw;
+	font-size: 3vw;
+}
+
+.row {
+	display: flex;
+}
+
 .home-navigation {
 	margin: 0 auto;
 	max-width: 450px;
@@ -31,4 +40,23 @@ a.text-icon {
 a.text-icon:hover {
 	background-color: #31b0d5;
 	border-color: #2aabd2;
+}
+
+.league-title {
+	text-align: center;
+}
+
+.date {
+	font-weight: bold;
+}
+
+.game-time {
+	font-weight: lighter;
+	color: #ccc;
+}
+
+.team-column {
+	flex-basis: 30vw;
+	padding-left: 1vw;
+	font-weight: bold;
 }

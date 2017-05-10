@@ -9,8 +9,9 @@ for accessing the NHL API located at statsapi.web.nhl.com
 from google.appengine.api import urlfetch
 from datetime import datetime
 import json
-import pytz
 
+import pytz
+import lxml.html
 
 class NHLGame(object):
     """Object to hold information about a NHL game"""
@@ -43,19 +44,21 @@ class NHLGame(object):
         self.goalie_home = None
         
         
-class NHLAPI(object):
-    """To use undocumented NHL API at statsapi.web.nhl.com"""
+class NHLScrape(object):
+    """To retrieve NHL data from various sites and store into structured NHLGame objects"""
     
+    
+    def __init__(self, start_date, end_date):
+        self.game_list = self.get_games(start_date, end_date)
     
     def get_games(self, start_date, end_date):
-        """Fetches game list between start_date and end_date
-        
+        """
         Args:
             start_date (str): format YYYY-MM-DD
             end_date (str): format YYYY-MM-DD
             
         Returns:
-            _format_data(self, json_data)
+            list: empty or list of NHLGame objects
         """
         
         # validate date strings
@@ -67,38 +70,26 @@ class NHLAPI(object):
                ",schedule.game.seriesSummary,seriesSummary.series&leaderCategories=points,goals"
                ",assists&leaderGameTypes=P&site=en_nhlCA&teamId=&gameType=&timecode=") % (start_date, end_date)
         result = urlfetch.fetch(url)
-        json_data = json.loads(result.content)
-        
-        return self._format_data(json_data)
-    
-    def _format_data(self, json_data):
-        """Formats the raw data retrieved into a configured object
-        
-        Args:
-            json_data (object)
-            
-        Returns:
-            list: empty or list of NHLGame objects
-        """
+        data_dict = json.loads(result.content)
         
         games = []
-        for date_data in json_data['dates']:
-            for json_game in date_data['games']:
+        for date_data in data_dict['dates']:
+            for game_dict in date_data['games']:
                 game = NHLGame()
                 
-                game.datetime = datetime.strptime(json_game['gameDate'],'%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=pytz.utc)
+                game.datetime = datetime.strptime(game_dict['gameDate'],'%Y-%m-%dT%H:%M:%SZ').replace(tzinfo=pytz.utc)
         
                 game.sport = 'Hockey'
                 game.league = 'NHL'
                         
-                game.type = json_game['gameType']
-                game.status = json_game['status']['detailedState']
+                game.type = game_dict['gameType']
+                game.status = game_dict['status']['detailedState']
                 if game.status is game.GAME_STATUS_FINAL:
-                    game.period = json_game['linescore']['currentPeriodOrdinal']
+                    game.period = game_dict['linescore']['currentPeriodOrdinal']
                 
-                game.team_away = json_game['teams']['away']['team']['name']
-                game.team_home = json_game['teams']['home']['team']['name']
+                game.team_away = game_dict['teams']['away']['team']['name']
+                game.team_home = game_dict['teams']['home']['team']['name']
                 
                 games.append(game)
             
-        return games
+        return games        

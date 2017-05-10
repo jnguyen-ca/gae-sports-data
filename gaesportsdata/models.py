@@ -17,6 +17,10 @@ class ApplicationVariable(ndb.Model):
     value = ndb.TextProperty()
     
     @classmethod
+    def get_app_var(cls, key, default=None):
+        return json.loads(ndb.Key(cls, key).get().value)
+    
+    @classmethod
     def set_app_var(cls, key, value):
         if not isinstance(value, basestring) and value is not None:
             value = json.dumps(value, default=lambda x: x.isoformat() if isinstance(x, datetime) else x.__dict__)

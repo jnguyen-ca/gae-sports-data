@@ -2,7 +2,7 @@
 
 """
 This module contains the game model and classes that are responsible 
-for accessing the NHL API located at statsapi.web.nhl.com
+for retrieving NHL data
 
 """
 
@@ -13,36 +13,8 @@ import json
 import pytz
 import lxml.html
 
-class NHLGame(object):
-    """Object to hold information about a NHL game"""
-    
-    
-    GAME_STATUS_SCHEDULED = 'Scheduled'
-    GAME_STATUS_PENDING = 'In Progress'
-    GAME_STATUS_FINAL = 'Final'
-    
-    GAME_TYPE_REGULAR = 'R'
-    GAME_TYPE_PLAYOFFS = 'P'
-    
-    def __init__(self):
-        self.datetime = None
-        
-        self.sport = None
-        self.league = None
-        
-        self.team_away = None
-        self.team_home = None
-        
-        self.score_away = None
-        self.score_home = None
-        
-        self.type = None
-        self.status = None
-        self.period = None
-        
-        self.goalie_away = None
-        self.goalie_home = None
-        
+import data_objects
+
         
 class NHLScrape(object):
     """To retrieve NHL data from various sites and store into structured NHLGame objects"""
@@ -75,7 +47,7 @@ class NHLScrape(object):
         games = []
         for date_data in data_dict['dates']:
             for game_dict in date_data['games']:
-                game = NHLGame()
+                game = data_objects.NHLGame()
                 
                 game.datetime = datetime.strptime(game_dict['gameDate'],'%Y-%m-%dT%H:%M:%SZ')
         
@@ -93,3 +65,27 @@ class NHLScrape(object):
                 games.append(game)
             
         return games
+    
+    def fill_data(self):
+        for game in self.game_list:
+            self.scrape_leftwinglock(game)
+            
+        return self.game_list
+    
+    def scrape_leftwinglock(self, game):
+        date_string = game.datetime.replace(tzinfo=pytz.utc).astimezone(pytz.timezone('EST')).date().isoformat()
+        
+        url = "http://leftwinglock.com/starting-goalies/index.php?date=%s" % date_string
+        result = urlfetch.fetch(url)
+        lxml_html = lxml.html.fromstring(result.content)
+        
+        games_html = lxml_html.cssselect('.l-main .l-content .g-cols')
+        
+#         for game_html in games_html:
+#             
+        
+        return
+        
+    def scrape_hockeyreference(self, game):
+        return
+        

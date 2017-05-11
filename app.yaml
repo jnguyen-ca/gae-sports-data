@@ -5,7 +5,7 @@ threadsafe: true
 handlers:
 - url: /static
   static_dir: gaesportsdata/static
-- url: /scrape/.*
+- url: /scrape.*
   script: gaesportsdata.app
   login: admin
 - url: /.*

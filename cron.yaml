@@ -1,0 +1,5 @@
+cron:
+- description: daily update
+  url: /scrape-all
+  schedule: every day 00:00
+  timezone: America/Edmonton

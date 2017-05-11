@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ league_title }}{% endblock %}
+
+{% block content %}
+<div class="league-title">
+	<h1>{{ league_title }}</h1>
+</div>
+<div class="games">
+  {% set vars = {'date_header':False} %}
+  {% for game in games %}
+  {% set game_date, game_time = game.datetime | convert_datetime %}
+  
+  {% if vars.date_header != game_date %}
+  <!-- Separate batches of games by date -->
+    {% if vars.date_header != False %}
+    </div>
+    {% endif %}
+  <div class="date-games">
+    <div class="date-header">
+      <span class="date">{{ game_date }}</span>
+    </div>
+  {% endif %}
+  {% if vars.update({'date_header': game_date}) %}{% endif %}
+  
+  <div class="row game-row">
+  	<div class="game-time-column">
+  	  <span class="game-time">{{ game_time }}</span>
+  	</div>
+    <div class="team-column team-away">
+    	<span class="team-name">{{ game.team_away }}</span>
+    </div>
+    <div class="team-separator">
+      <span class="separator">@</span>
+    </div>
+    <div class="team-column team-home">
+    	<span class="team-name">{{ game.team_home }}</span>
+    </div>
+  </div> 
+  
+  {% if loop.last %}
+  <!-- Close off the last date-header div -->
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
+    
+{% endblock %}

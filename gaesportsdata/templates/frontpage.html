@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="home-navigation">
+  <div class="row">
+  
+    {% for league in leagues %}
+    <div class="col league-icon">
+      <a class="text-icon {{ league }}-icon" href="{{ league }}">{{ league }}</a>
+    </div>
+  
+      {% if loop.index is divisibleby(2) and not loop.last %}
+      </div><div class="row">
+      {% endif %}
+  
+    {% endfor %}
+    
+  </div>
+</div>
+{% endblock %}

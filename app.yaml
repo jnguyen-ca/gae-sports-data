@@ -1,0 +1,18 @@
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+- url: /static
+  static_dir: gaesportsdata/static
+- url: /scrape.*
+  script: gaesportsdata.app
+  login: admin
+- url: /.*
+  script: gaesportsdata.app
+  
+libraries:
+- name: jinja2
+  version: latest
+- name: lxml
+  version: latest

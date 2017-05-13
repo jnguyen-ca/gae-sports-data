@@ -28,18 +28,32 @@
   	  <span class="game-time">{{ game_time }}</span>
   	</div>
     <div class="team-column team-away">
-    	<span class="team-name">{{ game.team_away }}</span>
+    	<div class="team-info">
+    		<span class="team-name">{{ game.team_away }}</span>
+    	</div>
+    	<div class="team-details">
+    		{% if game.moneyline_open_away %}
+    		<span class="team-opening-odds">{{ game.moneyline_open_away }}</span>
+    		{% endif %}
+    	</div>
     </div>
     <div class="team-separator">
       <span class="separator">@</span>
     </div>
     <div class="team-column team-home">
-    	<span class="team-name">{{ game.team_home }}</span>
+    	<div class="team-info">
+    		<span class="team-name">{{ game.team_home }}</span>
+    	</div>
+    	<div class="team-details">
+    		{% if game.moneyline_open_home %}
+    		<span class="team-opening-odds">{{ game.moneyline_open_home }}</span>
+    		{% endif %}
+    	</div>
     </div>
   </div> 
   
   {% if loop.last %}
-  <!-- Close off the last date-header div -->
+  <!-- Close off the last date-games div -->
   </div>
   {% endif %}
   {% endfor %}

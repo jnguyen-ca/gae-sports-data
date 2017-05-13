@@ -1,14 +1,18 @@
 # -*- coding: utf-8 -*-
 
+"""Handles all app routing and rendering"""
+
 from datetime import datetime, timedelta
 import flask
 import logging
 
 import models
 import game_info
+import game_details
 import constants
 
 from . import app
+from gaesportsdata import data_objects
 
 
 @app.route('/')
@@ -30,8 +34,9 @@ def league_page(league_id):
 
 @app.route('/scrape-all')
 def scrape_all():
-    for league in constants.LEAGUE_ID_LIST:
-        scrape_league(league)
+    for league_id in constants.LEAGUE_ID_LIST:
+        scrape_league(league_id)
+        scrape_details(league_id)
     return 'Done!'
 
 @app.route('/scrape/<league_id>')
@@ -63,3 +68,15 @@ def scrape_league(league_id):
         return '404 Not Found', 404
     
     return 'Success'
+
+@app.route('/scrape/details/<league_id>')
+def scrape_details(league_id):
+    league_id = league_id.upper()
+    
+    if league_id in constants.LEAGUE_ID_LIST:
+        games = models.ApplicationVariable.get_app_var(league_id)
+        games = [data_objects.create_object(values=game) for game in games]
+        VI = game_details.VegasInsider(league_id=league_id,games=games)
+        models.ApplicationVariable.set_app_var(league_id, VI.fill_odds())
+    
+    return 'Completed!'

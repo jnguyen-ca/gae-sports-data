@@ -8,14 +8,12 @@ Requires existing data_object.Game objects filled out by game_info classes
 
 from google.appengine.api import urlfetch
 from datetime import datetime, date
-import time
 import logging
 
-from lxml import etree, html
+from lxml import etree
 import pytz
 
 import constants
-import testing_data
 
 
 class VegasInsider(object):

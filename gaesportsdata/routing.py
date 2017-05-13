@@ -9,10 +9,10 @@ import logging
 import models
 import game_info
 import game_details
+import data_objects
 import constants
 
 from . import app
-from gaesportsdata import data_objects
 
 
 @app.route('/')

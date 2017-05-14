@@ -3,6 +3,7 @@
 """Structured objects for scraped data"""
 
 from datetime import datetime
+import logging
 
 import models
 import constants
@@ -117,21 +118,17 @@ class Team(object):
         team_names_app_var = models.ApplicationVariable.get_app_var(constants.APPVAR_TEAM_NAMES_KEY)
         if not team_names_app_var:
             team_names_app_var = Team.__set_default_team_names_app_var()
-        if (
-            team_names_app_var
-            and sport in team_names_app_var
-            and league in team_names_app_var[sport]
-        ):
+        if team_names_app_var:
             name = name.upper()
-            for team_id, team_properties in team_names_app_var[sport][league].iteritems():
-                if (
-                    name == team_id.upper()
-                    or (
-                        'aliases' in team_properties
-                        and name in (name_alias.upper() for name_alias in team_properties['aliases'])
-                    )
-                ):
-                    return team_id
+            try:
+                for team_id, team_properties in team_names_app_var[sport][league].iteritems():
+                    if (
+                        name == team_id.upper()
+                        or name in (name_alias.upper() for name_alias in team_properties['aliases'])
+                    ):
+                        return team_id
+            except KeyError:
+                logging.debug("%s > %s > %s team name doesn't exist" % (sport, league, name))
         return None
     
 ################################################################################
@@ -143,101 +140,136 @@ class Team(object):
                                         'MLB' : {
                                                 'Houston Astros' : {'aliases' : [
                                                                                  'Houston'
-                                                                                 ]},
+                                                                                 ],
+                                                                    'display':'Astros'},
                                                 'New York Yankees' : {'aliases' : [
                                                                                    'N.Y. Yankees'
-                                                                                   ]},
+                                                                                   ],
+                                                                      'display':'Yankees'},
                                                 'Seattle Mariners' : {'aliases' : [
                                                                                    'Seattle'
-                                                                                   ]},
+                                                                                   ],
+                                                                      'display':'Mariners'},
                                                 'Toronto Blue Jays' : {'aliases' : [
                                                                                     'Toronto'
-                                                                                    ]},
+                                                                                    ],
+                                                                       'display':'Blue Jays'},
                                                 'Atlanta Braves' : {'aliases' : [
                                                                                  'Atlanta'
-                                                                                 ]},
+                                                                                 ],
+                                                                    'display':'Braves'},
                                                 'Miami Marlins' : {'aliases' : [
                                                                                 'Miami'
-                                                                                ]},
+                                                                                ],
+                                                                   'display':'Marlins'},
                                                 'Minnesota Twins' : {'aliases' : [
                                                                                   'Minnesota'
-                                                                                  ]},
+                                                                                  ],
+                                                                     'display':'Twins'},
                                                 'Cleveland Indians' : {'aliases' : [
                                                                                     'Cleveland'
-                                                                                    ]},
+                                                                                    ],
+                                                                       'display':'Indians'},
                                                 'Philadelphia Phillies' : {'aliases' : [
                                                                                         'Philadelphia'
-                                                                                        ]},
+                                                                                        ],
+                                                                           'display':'Phillies'},
                                                 'Washington Nationals' : {'aliases' : [
                                                                                        'Washington'
-                                                                                       ]},
+                                                                                       ],
+                                                                          'display':'Nationals'},
                                                 'Tampa Bay Rays' : {'aliases' : [
                                                                                  'Tampa Bay'
-                                                                                 ]},
+                                                                                 ],
+                                                                    'display':'Rays'},
                                                 'Boston Red Sox' : {'aliases' : [
                                                                                  'Boston'
-                                                                                 ]},
+                                                                                 ],
+                                                                    'display':'Red Sox'},
                                                 'New York Mets' : {'aliases' : [
                                                                                 'N.Y. Mets'
-                                                                                ]},
+                                                                                ],
+                                                                   'display':'Mets'},
                                                 'Milwaukee Brewers' : {'aliases' : [
                                                                                     'Milwaukee'
-                                                                                    ]},
+                                                                                    ],
+                                                                       'display':'Brewers'},
                                                 'San Diego Padres' : {'aliases' : [
                                                                                    'San Diego'
-                                                                                   ]},
+                                                                                   ],
+                                                                      'display':'Padres'},
                                                 'Chicago White Sox' : {'aliases' : [
                                                                                     'Chi. White Sox'
-                                                                                    ]},
+                                                                                    ],
+                                                                       'display':'White Sox'},
                                                 'Baltimore Orioles' : {'aliases' : [
                                                                                     'Baltimore'
-                                                                                    ]},
+                                                                                    ],
+                                                                       'display':'Orioles'},
                                                 'Kansas City Royals' : {'aliases' : [
                                                                                      'Kansas City'
-                                                                                     ]},
+                                                                                     ],
+                                                                        'display':'Royals'},
                                                 'Chicago Cubs' : {'aliases' : [
                                                                                'Chi. Cubs'
-                                                                               ]},
+                                                                               ],
+                                                                  'display':'Cubs'},
                                                 'St. Louis Cardinals' : {'aliases' : [
                                                                                       'St. Louis'
-                                                                                      ]},
+                                                                                      ],
+                                                                         'display':'Cardinals'},
                                                 'Oakland Athletics' : {'aliases' : [
                                                                                     'Oakland'
-                                                                                    ]},
+                                                                                    ],
+                                                                       'display':'Athletics'},
                                                 'Texas Rangers' : {'aliases' : [
                                                                                 'Texas'
-                                                                                ]},
+                                                                                ],
+                                                                   'display':'Rangers'},
                                                 'Los Angeles Dodgers' : {'aliases' : [
                                                                                       'L.A. Dodgers'
-                                                                                      ]},
+                                                                                      ],
+                                                                         'display':'Dodgers'},
                                                 'Colorado Rockies' : {'aliases' : [
                                                                                    'Colorado'
-                                                                                   ]},
+                                                                                   ],
+                                                                      'display':'Rookies'},
                                                 'Detroit Tigers' : {'aliases' : [
                                                                                  'Detroit'
-                                                                                 ]},
+                                                                                 ],
+                                                                    'display':'Tigers'},
                                                 'Los Angeles Angels' : {'aliases' : [
                                                                                      'L.A. Angels'
-                                                                                     ]},
+                                                                                     ],
+                                                                        'display':'Angels'},
                                                 'Cincinnati Reds' : {'aliases' : [
                                                                                   'Cincinnati'
-                                                                                  ]},
+                                                                                  ],
+                                                                     'display':'Reds'},
                                                 'San Francisco Giants' : {'aliases' : [
                                                                                        'San Francisco'
-                                                                                       ]},
+                                                                                       ],
+                                                                          'display':'Giants'},
                                                 'Pittsburgh Pirates' : {'aliases' : [
                                                                                      'Pittsburgh'
-                                                                                     ]},
+                                                                                     ],
+                                                                        'display':'Pirates'},
                                                 'Arizona Diamondbacks' : {'aliases' : [
                                                                                        'Arizona'
-                                                                                       ]},
+                                                                                       ],
+                                                                          'display':'Diamondbacks'},
                                                  }
                                         },
                               'Hockey' : {
-                                            'NHL' : {
-                                                     
-                                                     }
-                                            }
+                                        'NHL' : {
+                                                 'Nashville Predators' : {'aliases' : ['Nashville'],
+                                                                          'display' : 'Predators'
+                                                                          },
+                                                 'Anaheim Ducks' : {'aliases':['Anaheim'],'display':'Ducks'},
+                                                 'Ottawa Senators' : {'aliases':['Ottawa'],'display':'Senators'},
+                                                 'Pittsburgh Penguins' : {'aliases':['Pittsburgh'],'display':'Penguins'},
+                                                 }
+                                        }
                               }
         models.ApplicationVariable.set_app_var(constants.APPVAR_TEAM_NAMES_KEY, team_names_app_var)
         return team_names_app_var

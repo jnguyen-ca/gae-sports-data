@@ -1,12 +1,14 @@
-{% macro display_team_section(team, side) %}
+{% macro display_team_section(sport, league, team, side) %}
 {#
 Args:
+  sport (str)
+  league (str)
   team (data_objects.Team)
   side (str) : used for html classes
 #}
 <div class="team-column team-{{ side }}">
 	<div class="team-info">
-		<span class="team-name">{{ team.name }}</span>
+		<span class="team-name">{{ team_display_name(sport, league, team.name) }}</span>
 	</div>
 	<div class="team-details">
 		{% if team.moneyline_open %}

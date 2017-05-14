@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% import "macros.html" as macros %}
+{% import "macros.html" as macros with context %}
 
 {% block title %}{{ league_title }}{% endblock %}
 
@@ -28,11 +28,11 @@
   	<div class="game-time-column">
   	  <span class="game-time">{{ game_time }}</span>
   	</div>
-    {{ macros.display_team_section(game.teams.away, 'away') }}
+    {{ macros.display_team_section(game.sport, game.league, game.teams.away, 'away') }}
     <div class="team-separator">
       <span class="separator">@</span>
     </div>
-    {{ macros.display_team_section(game.teams.home, 'home') }}
+    {{ macros.display_team_section(game.sport, game.league, game.teams.home, 'home') }}
   </div> 
   
   {% if loop.last %}

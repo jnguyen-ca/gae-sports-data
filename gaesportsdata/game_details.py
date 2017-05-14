@@ -13,6 +13,7 @@ import logging
 from lxml import etree
 import pytz
 
+import data_objects
 import constants
 
 
@@ -42,39 +43,33 @@ class VegasInsider(object):
         odds_dict = self._scrape_odds()
         
         for game in self.games:
-            game_info = {
-                         'datetime' : game.datetime.replace(tzinfo=pytz.utc).astimezone(self.timezone),
-                         'team_away' : game.teams.away.name,
-                         'team_home' : game.teams.home.name,
-                         }
             
-            for index, odds_game in enumerate(odds_dict['vegas']):
-                if self._matching_odds(game_info, odds_game):
-                    game.teams.away.moneyline_open = odds_game['odds_team_away']
-                    game.teams.home.moneyline_open = odds_game['odds_team_home']
-                    #TODO: remove used from list
-            # good chance pages were sorted the same so can check using index otherwise have to loop
-#             if index in odds_dict['offshore'] and self._matching_odds(game_info, odds_dict['offshore'][index]):
-#                 #TODO: fill it out
-#                 pass
+            vegas_odds = self._get_matching_odds(game, odds_dict['vegas'])
+            if vegas_odds:
+                game.teams.away.moneyline_open = vegas_odds['odds_team_away']
+                game.teams.home.moneyline_open = vegas_odds['odds_team_home']
+            #TODO: offshore
         
         return self.games
     
-    def _matching_odds(self, game_info, odds_game):
-        """Determine if game_info and odds_game refer to the same game
+    def _get_matching_odds(self, game, odds_list):
+        """Determine if game and odds_game refer to the same game
         Args:
-            game_info (dict): with keys datetime, team_away, team_home
-            odds_game (dict): individual game from self._scrape_game_odds_tree()
+            game (Game): 
+            odds_list (list): list of odds from self._scrape_game_odds_tree
         Returns:
-            boolean
+            dict: individual game from self._scrape_game_odds_tree
         """
-        # margin of error of 15 minutes
-        time_difference = divmod((game_info['datetime'] - odds_game['datetime']).total_seconds(), 60)
-        if abs(time_difference[0]) < 15:
-            if (odds_game['team_away'] in game_info['team_away'] 
-                and odds_game['team_home'] in game_info['team_home']):
-                return True
-        return False
+        
+        converted_game_datetime = game.datetime.replace(tzinfo=pytz.utc).astimezone(self.timezone)
+        for odds_game in odds_list:
+            time_difference = divmod((converted_game_datetime - odds_game['datetime']).total_seconds(), 60)
+            # margin of error of 15 minutes
+            if abs(time_difference[0]) < 15:
+                if (data_objects.Team.is_matching_team(game.sport, game.league, game.teams.away.name, odds_game['team_away'])
+                    and data_objects.Team.is_matching_team(game.sport, game.league, game.teams.home.name, odds_game['team_home'])):
+                    return odds_game
+        return None
     
     def _scrape_odds(self):
         """Makes requests to vegasinsider odds pages to get game odds

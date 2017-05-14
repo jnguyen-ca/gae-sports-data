@@ -18,7 +18,8 @@ class ApplicationVariable(ndb.Model):
     
     @classmethod
     def get_app_var(cls, key, default=None):
-        return jsonpickle.decode(ndb.Key(cls, key).get().value)
+        app_var = ndb.Key(cls, key).get()
+        return jsonpickle.decode(app_var.value) if app_var else default
     
     @classmethod
     def set_app_var(cls, key, value):

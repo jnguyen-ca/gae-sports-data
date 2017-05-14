@@ -4,6 +4,7 @@
 
 from datetime import datetime
 
+import models
 import constants
 
     
@@ -87,3 +88,158 @@ class Team(object):
         
         self.moneyline_open = None
         self.moneyline = None
+    
+    @staticmethod
+    def is_matching_team(sport, league, name1, name2):
+        if name1.upper() == name2.upper():
+            return True
+        
+        name1_key = Team.get_team_id(sport, league, name1)
+        name2_key = Team.get_team_id(sport, league, name2)
+        if (name1_key
+            and name1_key == name2_key
+        ):
+            return True
+        
+        return False
+    
+    @staticmethod
+    def get_team_id(sport, league, name):
+        """Get the key name of a team stored in the datastore from any of its possible aliases
+        
+        Args:
+            sport (str): a valid Game.sport
+            league (str): a valid league id
+            name (str): name of team
+        Returns:
+            str|None: key name of team, None if no match
+        """
+        team_names_app_var = models.ApplicationVariable.get_app_var(constants.APPVAR_TEAM_NAMES_KEY)
+        if not team_names_app_var:
+            team_names_app_var = Team.__set_default_team_names_app_var()
+        if (
+            team_names_app_var
+            and sport in team_names_app_var
+            and league in team_names_app_var[sport]
+        ):
+            name = name.upper()
+            for team_id, team_properties in team_names_app_var[sport][league].iteritems():
+                if (
+                    name == team_id.upper()
+                    or (
+                        'aliases' in team_properties
+                        and name in (name_alias.upper() for name_alias in team_properties['aliases'])
+                    )
+                ):
+                    return team_id
+        return None
+    
+################################################################################
+#####TODO: get rid of this, TEMPORARY until app var editing is developed
+    @staticmethod
+    def __set_default_team_names_app_var():
+        team_names_app_var = {
+                              'Baseball' : {
+                                        'MLB' : {
+                                                'Houston Astros' : {'aliases' : [
+                                                                                 'Houston'
+                                                                                 ]},
+                                                'New York Yankees' : {'aliases' : [
+                                                                                   'N.Y. Yankees'
+                                                                                   ]},
+                                                'Seattle Mariners' : {'aliases' : [
+                                                                                   'Seattle'
+                                                                                   ]},
+                                                'Toronto Blue Jays' : {'aliases' : [
+                                                                                    'Toronto'
+                                                                                    ]},
+                                                'Atlanta Braves' : {'aliases' : [
+                                                                                 'Atlanta'
+                                                                                 ]},
+                                                'Miami Marlins' : {'aliases' : [
+                                                                                'Miami'
+                                                                                ]},
+                                                'Minnesota Twins' : {'aliases' : [
+                                                                                  'Minnesota'
+                                                                                  ]},
+                                                'Cleveland Indians' : {'aliases' : [
+                                                                                    'Cleveland'
+                                                                                    ]},
+                                                'Philadelphia Phillies' : {'aliases' : [
+                                                                                        'Philadelphia'
+                                                                                        ]},
+                                                'Washington Nationals' : {'aliases' : [
+                                                                                       'Washington'
+                                                                                       ]},
+                                                'Tampa Bay Rays' : {'aliases' : [
+                                                                                 'Tampa Bay'
+                                                                                 ]},
+                                                'Boston Red Sox' : {'aliases' : [
+                                                                                 'Boston'
+                                                                                 ]},
+                                                'New York Mets' : {'aliases' : [
+                                                                                'N.Y. Mets'
+                                                                                ]},
+                                                'Milwaukee Brewers' : {'aliases' : [
+                                                                                    'Milwaukee'
+                                                                                    ]},
+                                                'San Diego Padres' : {'aliases' : [
+                                                                                   'San Diego'
+                                                                                   ]},
+                                                'Chicago White Sox' : {'aliases' : [
+                                                                                    'Chi. White Sox'
+                                                                                    ]},
+                                                'Baltimore Orioles' : {'aliases' : [
+                                                                                    'Baltimore'
+                                                                                    ]},
+                                                'Kansas City Royals' : {'aliases' : [
+                                                                                     'Kansas City'
+                                                                                     ]},
+                                                'Chicago Cubs' : {'aliases' : [
+                                                                               'Chi. Cubs'
+                                                                               ]},
+                                                'St. Louis Cardinals' : {'aliases' : [
+                                                                                      'St. Louis'
+                                                                                      ]},
+                                                'Oakland Athletics' : {'aliases' : [
+                                                                                    'Oakland'
+                                                                                    ]},
+                                                'Texas Rangers' : {'aliases' : [
+                                                                                'Texas'
+                                                                                ]},
+                                                'Los Angeles Dodgers' : {'aliases' : [
+                                                                                      'L.A. Dodgers'
+                                                                                      ]},
+                                                'Colorado Rockies' : {'aliases' : [
+                                                                                   'Colorado'
+                                                                                   ]},
+                                                'Detroit Tigers' : {'aliases' : [
+                                                                                 'Detroit'
+                                                                                 ]},
+                                                'Los Angeles Angels' : {'aliases' : [
+                                                                                     'L.A. Angels'
+                                                                                     ]},
+                                                'Cincinnati Reds' : {'aliases' : [
+                                                                                  'Cincinnati'
+                                                                                  ]},
+                                                'San Francisco Giants' : {'aliases' : [
+                                                                                       'San Francisco'
+                                                                                       ]},
+                                                'Pittsburgh Pirates' : {'aliases' : [
+                                                                                     'Pittsburgh'
+                                                                                     ]},
+                                                'Arizona Diamondbacks' : {'aliases' : [
+                                                                                       'Arizona'
+                                                                                       ]},
+                                                 }
+                                        },
+                              'Hockey' : {
+                                            'NHL' : {
+                                                     
+                                                     }
+                                            }
+                              }
+        models.ApplicationVariable.set_app_var(constants.APPVAR_TEAM_NAMES_KEY, team_names_app_var)
+        return team_names_app_var
+    # end TODO
+################################################################################

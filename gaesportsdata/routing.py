@@ -3,6 +3,7 @@
 """Handles all app routing and rendering"""
 
 from datetime import datetime, timedelta
+import time
 import flask
 import logging
 
@@ -35,7 +36,11 @@ def league_page(league_id):
 def scrape_all():
     for league_id in constants.LEAGUE_ID_LIST:
         scrape_league(league_id)
+        
+    for league_id in constants.LEAGUE_ID_LIST:
         scrape_details(league_id)
+        time.sleep(5)
+        
     return 'Done!'
 
 @app.route('/scrape/<league_id>')

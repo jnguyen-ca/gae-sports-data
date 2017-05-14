@@ -7,3 +7,5 @@ LEAGUE_ID_LIST = [
                   LEAGUE_ID_NHL,
                   LEAGUE_ID_MLB,
                   ]
+
+APPVAR_TEAM_NAMES_KEY = 'Team Names'

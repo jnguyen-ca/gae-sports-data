@@ -1,0 +1,46 @@
+<!-- Recursive macros to display strings/lists/dictionaries -->
+
+{% macro display(value, level=0) %}
+{# 
+wrap the value in appropriate html tags
+Args:
+  value (str|list|dict) : value to be displayed
+  level (int) : how many dict value is nested in
+#}
+  {% if value is mapping %}
+    {{ display_dict(value, level) }}
+  {% elif value is string %}
+    {{ display_string(value) }}
+  {% elif value is iterable %}
+    {{ display_list(value) }}
+  {% endif %}
+{% endmacro %}
+
+{% macro display_string(value) %}
+  <span class="string-entry">{{ value }}</span>
+{% endmacro %}
+
+{% macro display_list(list) %}
+  <span class="list-entries">
+  {% for entry in list %}
+  	  <span class="list-entry">{{ display(entry) }}</span>
+  {% endfor %}
+  </span>
+{% endmacro %}
+
+{% macro display_dict_entry(key, value, level=0) %}
+  <div class="dict-entry{% if value is none %} no-value hidden{% endif %}">
+    <span class="dict-key">{{ key }}</span>
+    <span class="dict-value">
+      {{ display(value, level+1) }}
+    </span>
+  </div>
+{% endmacro %}
+
+{% macro display_dict(dict, level=0) %}
+  <div class="dict-entries dict-level-{{ level }}">
+    {% for key, value in dict.iteritems() %}
+      {{ display_dict_entry(key, value, level) }}
+    {% endfor %}
+  </div>
+{% endmacro %}

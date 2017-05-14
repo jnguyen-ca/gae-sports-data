@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+{% import "macros.html" as macros %}
 
 {% block title %}{{ league_title }}{% endblock %}
 
@@ -27,29 +28,11 @@
   	<div class="game-time-column">
   	  <span class="game-time">{{ game_time }}</span>
   	</div>
-    <div class="team-column team-away">
-    	<div class="team-info">
-    		<span class="team-name">{{ game.teams.away.name }}</span>
-    	</div>
-    	<div class="team-details">
-    		{% if game.teams.away.moneyline_open %}
-    		<span class="team-opening-odds">{{ game.teams.away.moneyline_open }}</span>
-    		{% endif %}
-    	</div>
-    </div>
+    {{ macros.display_team_section(game.teams.away, 'away') }}
     <div class="team-separator">
       <span class="separator">@</span>
     </div>
-    <div class="team-column team-home">
-    	<div class="team-info">
-    		<span class="team-name">{{ game.teams.home.name }}</span>
-    	</div>
-    	<div class="team-details">
-    		{% if game.teams.home.moneyline_open %}
-    		<span class="team-opening-odds">{{ game.teams.home.moneyline_open }}</span>
-    		{% endif %}
-    	</div>
-    </div>
+    {{ macros.display_team_section(game.teams.home, 'home') }}
   </div> 
   
   {% if loop.last %}

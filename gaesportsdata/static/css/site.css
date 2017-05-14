@@ -59,5 +59,12 @@ a.text-icon:hover {
 .team-column {
 	flex-basis: 30vw;
 	padding-left: 1vw;
+}
+
+.team-name {
 	font-weight: bold;
+}
+
+.team-details {
+	font-size: 1.5vw;
 }

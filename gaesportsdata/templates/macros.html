@@ -1,3 +1,22 @@
+{% macro display_team_section(team, side) %}
+{#
+Args:
+  team (data_objects.Team)
+  side (str) : used for html classes
+#}
+<div class="team-column team-{{ side }}">
+	<div class="team-info">
+		<span class="team-name">{{ team.name }}</span>
+	</div>
+	<div class="team-details">
+		{% if team.moneyline_open %}
+		<span class="label">Open:</span>
+		<span class="team-moneyline-open">{{ team.moneyline_open }}</span>
+		{% endif %}
+	</div>
+</div>
+{% endmacro %}
+
 <!-- Recursive macros to display strings/lists/dictionaries -->
 
 {% macro display(value, level=0) %}

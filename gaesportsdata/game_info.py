@@ -10,11 +10,17 @@ from datetime import datetime
 import json
 
 import data_objects
-import constants
 
 
 class MLBAMAPI(object):
     """To retrieve data from MLB Advanced Media API"""
+    
+    GAME_STATUS_SCHEDULED = 'Scheduled'
+    GAME_STATUS_PENDING = 'In Progress'
+    GAME_STATUS_FINAL = 'Final'
+    
+    GAME_TYPE_REGULAR = 'R'
+    GAME_TYPE_PLAYOFFS = 'P'
     
     def __init__(self, url, league_id):
         """
@@ -38,16 +44,17 @@ class MLBAMAPI(object):
         games = []
         for date_data in self.response_dict['dates']:
             for game_dict in date_data['games']:
-                game = data_objects.create_object(self.league_id)
+                game = data_objects.Game(self.league_id)
                 game.datetime = datetime.strptime(game_dict['gameDate'],'%Y-%m-%dT%H:%M:%SZ')
         
-                game.type = game_dict['gameType']
-                game.status = game_dict['status']['detailedState']
-                if game.status is game.GAME_STATUS_FINAL:
-                    game.period = game_dict['linescore']['currentPeriodOrdinal']
+                # Not using yet so commented out
+#                 game.type = game_dict['gameType']
+#                 game.status = game_dict['status']['detailedState']
+#                 if game.status is self.GAME_STATUS_FINAL:
+#                     game.period = game_dict['linescore']['currentPeriodOrdinal']
                 
-                game.team_away = game_dict['teams']['away']['team']['name']
-                game.team_home = game_dict['teams']['home']['team']['name']
+                game.teams.away.name = game_dict['teams']['away']['team']['name']
+                game.teams.home.name = game_dict['teams']['home']['team']['name']
                 
                 games.append(game)
                 

@@ -44,14 +44,14 @@ class VegasInsider(object):
         for game in self.games:
             game_info = {
                          'datetime' : game.datetime.replace(tzinfo=pytz.utc).astimezone(self.timezone),
-                         'team_away' : game.team_away,
-                         'team_home' : game.team_home,
+                         'team_away' : game.teams.away.name,
+                         'team_home' : game.teams.home.name,
                          }
             
             for index, odds_game in enumerate(odds_dict['vegas']):
                 if self._matching_odds(game_info, odds_game):
-                    game.moneyline_open_away = odds_game['odds_team_away']
-                    game.moneyline_open_home = odds_game['odds_team_home']
+                    game.teams.away.moneyline_open = odds_game['odds_team_away']
+                    game.teams.home.moneyline_open = odds_game['odds_team_home']
                     #TODO: remove used from list
             # good chance pages were sorted the same so can check using index otherwise have to loop
 #             if index in odds_dict['offshore'] and self._matching_odds(game_info, odds_dict['offshore'][index]):

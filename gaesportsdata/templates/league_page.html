@@ -29,11 +29,11 @@
   	</div>
     <div class="team-column team-away">
     	<div class="team-info">
-    		<span class="team-name">{{ game.team_away }}</span>
+    		<span class="team-name">{{ game.teams.away.name }}</span>
     	</div>
     	<div class="team-details">
-    		{% if game.moneyline_open_away %}
-    		<span class="team-opening-odds">{{ game.moneyline_open_away }}</span>
+    		{% if game.teams.away.moneyline_open %}
+    		<span class="team-opening-odds">{{ game.teams.away.moneyline_open }}</span>
     		{% endif %}
     	</div>
     </div>
@@ -42,11 +42,11 @@
     </div>
     <div class="team-column team-home">
     	<div class="team-info">
-    		<span class="team-name">{{ game.team_home }}</span>
+    		<span class="team-name">{{ game.teams.home.name }}</span>
     	</div>
     	<div class="team-details">
-    		{% if game.moneyline_open_home %}
-    		<span class="team-opening-odds">{{ game.moneyline_open_home }}</span>
+    		{% if game.teams.home.moneyline_open %}
+    		<span class="team-opening-odds">{{ game.teams.home.moneyline_open }}</span>
     		{% endif %}
     	</div>
     </div>

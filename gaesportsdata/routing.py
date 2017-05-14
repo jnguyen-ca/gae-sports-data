@@ -9,7 +9,6 @@ import logging
 import models
 import game_info
 import game_details
-import data_objects
 import constants
 
 from . import app
@@ -75,7 +74,6 @@ def scrape_details(league_id):
     
     if league_id in constants.LEAGUE_ID_LIST:
         games = models.ApplicationVariable.get_app_var(league_id)
-        games = [data_objects.create_object(values=game) for game in games]
         VI = game_details.VegasInsider(league_id=league_id,games=games)
         models.ApplicationVariable.set_app_var(league_id, VI.fill_odds())
     

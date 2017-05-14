@@ -7,8 +7,8 @@ used throughout the application.
 """
 
 from google.appengine.ext import ndb
-from datetime import datetime
-import json
+
+import jsonpickle
 
 
 class ApplicationVariable(ndb.Model):
@@ -18,10 +18,10 @@ class ApplicationVariable(ndb.Model):
     
     @classmethod
     def get_app_var(cls, key, default=None):
-        return json.loads(ndb.Key(cls, key).get().value)
+        return jsonpickle.decode(ndb.Key(cls, key).get().value)
     
     @classmethod
     def set_app_var(cls, key, value):
         if not isinstance(value, basestring) and value is not None:
-            value = json.dumps(value, default=lambda x: x.isoformat() if isinstance(x, datetime) else x.__dict__)
+            value = jsonpickle.encode(value)
         return cls(id=key, value=value).put()

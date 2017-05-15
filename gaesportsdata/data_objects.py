@@ -18,7 +18,7 @@ class Game(object):
         
         self._set_sport_and_league(league_id.upper())
         self._datetime = None
-        self._teams = Teams()
+        self._teams = Teams(self)
     
     @property
     def sport(self):
@@ -57,9 +57,15 @@ class Game(object):
             self._sport = 'Baseball'
         
 class Teams(object):
-    def __init__(self):
-        self._away = Team()
-        self._home = Team()
+    def __init__(self, game):
+        """
+        Args:
+            game (Game)
+        """
+        
+        self.game = game
+        self._away = Team(game)
+        self._home = Team(game)
     
     @property
     def away(self):
@@ -82,13 +88,29 @@ class Teams(object):
 class Team(object):
     """Hold detailed information about teams"""
     
-    def __init__(self):
-        self.name = None
+    def __init__(self, game):
+        """
+        Args:
+            game (Game)
+        """
+        self.game = game
+        
+        self._name = None
         
         self.score = None
         
         self.moneyline_open = None
         self.moneyline = None
+        
+    @property
+    def name(self):
+        return self._name
+    @name.setter
+    def name(self, value):
+        name_id = self.get_team_id(self.game.sport, self.game.league, value)
+        if name_id:
+            self._name = name_id
+        self._name = value
     
     @staticmethod
     def is_matching_team(sport, league, name1, name2):
@@ -214,8 +236,8 @@ class Team(object):
                                                                                'Chi. Cubs'
                                                                                ],
                                                                   'display':'Cubs'},
-                                                'St. Louis Cardinals' : {'aliases' : [
-                                                                                      'St. Louis'
+                                                'St Louis Cardinals' : {'aliases' : [
+                                                                                      'St. Louis','St. Louis Cardinals'
                                                                                       ],
                                                                          'display':'Cardinals'},
                                                 'Oakland Athletics' : {'aliases' : [

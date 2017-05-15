@@ -47,6 +47,10 @@ a.text-icon:hover {
 	text-align: center;
 }
 
+.game-row:hover {
+	background-color: #1c4352;
+}
+
 .date {
 	font-weight: bold;
 }

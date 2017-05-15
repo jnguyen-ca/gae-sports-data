@@ -3,6 +3,8 @@
 
 {% block title %}{{ league_title }}{% endblock %}
 
+{% block styles %}<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/logos.css') }}">{% endblock %}
+
 {% block content %}
 <div class="league-title">
 	<h1>{{ league_title }}</h1>

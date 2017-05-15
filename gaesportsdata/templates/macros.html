@@ -7,15 +7,16 @@ Args:
   side (str) : used for html classes
 #}
 <div class="team-column team-{{ side }}">
-	<div class="team-info">
-		<span class="team-name">{{ team_display_name(sport, league, team.name) }}</span>
-	</div>
-	<div class="team-details">
-		{% if team.moneyline_open %}
-		<span class="label">Open:</span>
-		<span class="team-moneyline-open">{{ team.moneyline_open }}</span>
-		{% endif %}
-	</div>
+  <div class="team-info">
+    <span class="team-name">{{ team_display_name(sport, league, team.name) }}</span>
+    <span class="team-logo logo-{{ team.name|replace(' ','') }}"></span>
+  </div>
+  <div class="team-details">
+    {% if team.moneyline_open %}
+	<span class="label">Open:</span>
+	<span class="team-moneyline-open">{{ team.moneyline_open }}</span>
+	{% endif %}
+  </div>
 </div>
 {% endmacro %}
 

@@ -1,0 +1,29 @@
+.league-title {
+	text-align: center;
+}
+
+.game-row:hover {
+	background-color: #1c4352;
+}
+
+.date {
+	font-weight: bold;
+}
+
+.game-time {
+	font-weight: lighter;
+	color: #ccc;
+}
+
+.team-column {
+	flex-basis: 30vw;
+	padding-left: 1vw;
+}
+
+.team-name {
+	font-weight: bold;
+}
+
+.team-details {
+	font-size: $responsive-font-size / 2;
+}

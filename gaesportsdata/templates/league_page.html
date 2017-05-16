@@ -3,8 +3,6 @@
 
 {% block title %}{{ league_title }}{% endblock %}
 
-{% block styles %}<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/logos.css') }}">{% endblock %}
-
 {% block content %}
 <div class="league-title">
 	<h1>{{ league_title }}</h1>
@@ -33,11 +31,11 @@
   	<div class="game-time-column">
   	  <span class="game-time">{{ game_time }}</span>
   	</div>
-    {{ macros.display_team_section(game.sport, game.league, game.teams.away, 'away') }}
+    {{ macros.display_team_section(game.teams.away, 'away') }}
     <div class="team-separator">
       <span class="separator">@</span>
     </div>
-    {{ macros.display_team_section(game.sport, game.league, game.teams.home, 'home') }}
+    {{ macros.display_team_section(game.teams.home, 'home') }}
   </div> 
   
   {% if loop.last %}

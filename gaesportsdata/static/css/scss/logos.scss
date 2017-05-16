@@ -1,0 +1,45 @@
+$mlb-column-0: 0; $mlb-column-1: 20%; $mlb-column-2: 40%; $mlb-column-3: 60%; $mlb-column-4: 80%; $mlb-column-5: 100%;
+$mlb-row-0: 0; $mlb-row-1: 25%; $mlb-row-2: 49%; $mlb-row-3: 75%; $mlb-row-4: 99%;
+
+.team-logo {
+	display: inline-block;
+	height: $responsive-font-size;
+	width: $responsive-font-size;
+	background-repeat: no-repeat;
+}
+
+.mlb-games .team-logo {
+	background-image: url("../images/mlblogos.png");
+	background-size: 600% 550%;
+}
+
+.logo-arizonadiamondbacks {background-position: $mlb-column-1 $mlb-row-0;}
+.logo-atlantabraves {background-position: $mlb-column-3 $mlb-row-3;}
+.logo-baltimoreorioles {background-position: $mlb-column-0 $mlb-row-1;}
+.logo-bostonredsox {background-position: $mlb-column-1 $mlb-row-1;}
+.logo-chicagocubs {background-position: $mlb-column-2 $mlb-row-0;}
+.logo-chicagowhitesox {background-position: $mlb-column-2 $mlb-row-1;}
+.logo-cincinnatireds {background-position: $mlb-column-0 $mlb-row-2;}
+.logo-clevelandindians {background-position: $mlb-column-1 $mlb-row-2;}
+.logo-coloradorockies {background-position: $mlb-column-2 $mlb-row-2;}
+.logo-detroittigers {background-position: $mlb-column-3 $mlb-row-0;}
+.logo-houstonastros {background-position: $mlb-column-3 $mlb-row-1;}
+.logo-kansascityroyals {background-position: $mlb-column-3 $mlb-row-2;}
+.logo-losangelesangels {background-position: $mlb-column-0 $mlb-row-3;}
+.logo-losangelesdodgers {background-position: $mlb-column-1 $mlb-row-3;}
+.logo-miamimarlins {background-position: $mlb-column-2 $mlb-row-3;}
+.logo-milwaukeebrewers {background-position: $mlb-column-0 $mlb-row-0;}
+.logo-minnesotatwins {background-position: $mlb-column-4 $mlb-row-0;}
+.logo-newyorkmets {background-position: $mlb-column-4 $mlb-row-1;}
+.logo-newyorkyankees {background-position: $mlb-column-4 $mlb-row-2;}
+.logo-oaklandathletics {background-position: $mlb-column-4 $mlb-row-3;}
+.logo-philadelphiaphillies {background-position: $mlb-column-0 $mlb-row-4;}
+.logo-pittsburghpirates {background-position: $mlb-column-1 $mlb-row-4;}
+.logo-stlouiscardinals {background-position: $mlb-column-5 $mlb-row-0;}
+.logo-sandiegopadres {background-position: $mlb-column-2 $mlb-row-4;}
+.logo-sanfranciscogiants {background-position: $mlb-column-4 $mlb-row-4;}
+.logo-seattlemariners {background-position: $mlb-column-3 $mlb-row-4;}
+.logo-tampabayrays {background-position: $mlb-column-5 $mlb-row-1;}
+.logo-texasrangers {background-position: $mlb-column-5 $mlb-row-2;}
+.logo-torontobluejays {background-position: $mlb-column-5 $mlb-row-3;}
+.logo-washingtonnationals {background-position: $mlb-column-5 $mlb-row-4;}

@@ -9,7 +9,7 @@ body {
 
 .container {
 	padding: 0 4vw;
-	font-size: 3vw;
+	font-size: $responsive-font-size;
 }
 
 .row {
@@ -41,34 +41,4 @@ a.text-icon {
 a.text-icon:hover {
 	background-color: #31b0d5;
 	border-color: #2aabd2;
-}
-
-.league-title {
-	text-align: center;
-}
-
-.game-row:hover {
-	background-color: #1c4352;
-}
-
-.date {
-	font-weight: bold;
-}
-
-.game-time {
-	font-weight: lighter;
-	color: #ccc;
-}
-
-.team-column {
-	flex-basis: 30vw;
-	padding-left: 1vw;
-}
-
-.team-name {
-	font-weight: bold;
-}
-
-.team-details {
-	font-size: 1.5vw;
 }

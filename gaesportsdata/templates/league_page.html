@@ -9,7 +9,10 @@
 <div class="league-title">
 	<h1>{{ league_title }}</h1>
 </div>
-<div class="games">
+{% if not games %}
+<div style="text-align: center;">No games stored.</div>
+{% else %}
+<div class="games {{ games[0].league|lower() }}-games">
   {% set vars = {'date_header':False} %}
   {% for game in games %}
   {% set game_date, game_time = game.datetime | convert_datetime %}
@@ -43,5 +46,5 @@
   {% endif %}
   {% endfor %}
 </div>
-    
+{% endif %}
 {% endblock %}

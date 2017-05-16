@@ -1,127 +1,131 @@
 .team-logo {
 	display: inline-block;
-	background: url("../images/logos.png") no-repeat;
 	height: 3vw;
 	width: 3vw;
+	background-repeat: no-repeat;
+}
+
+.mlb-games .team-logo {
+	background-image: url("../images/mlblogos.png");
 	background-size: 600% 550%;
 }
 
-.logo-ArizonaDiamondbacks {
+.logo-arizonadiamondbacks {
 	background-position: 20% 0;
 }
 
-.logo-AtlantaBraves {
+.logo-atlantabraves {
 	background-position: 60% 75%;
 }
 
-.logo-BaltimoreOrioles {
+.logo-baltimoreorioles {
 	background-position: 0 25%;
 }
 
-.logo-BostonRedSox {
+.logo-bostonredsox {
 	background-position: 20% 25%;
 }
 
-.logo-ChicagoCubs {
+.logo-chicagocubs {
     background-position: 40% 0;
 }
 
-.logo-ChicagoWhiteSox {
+.logo-chicagowhitesox {
     background-position: 40% 25%;
 }
 
-.logo-CincinnatiReds {
+.logo-cincinnatireds {
     background-position: 0 49%;
 }
 
-.logo-ClevelandIndians {
+.logo-clevelandindians {
     background-position: 20% 49%;
 }
 
-.logo-ColoradoRockies {
+.logo-coloradorockies {
     background-position: 40% 49%;
 }
 
-.logo-DetroitTigers {
+.logo-detroittigers {
     background-position: 60% 0;
 }
 
-.logo-HoustonAstros {
+.logo-houstonastros {
     background-position: 60% 25%;
 }
 
-.logo-KansasCityRoyals {
+.logo-kansascityroyals {
     background-position: 60% 49%;
 }
 
-.logo-LosAngelesAngels {
+.logo-losangelesangels {
     background-position: 0 75%;
 }
 
-.logo-LosAngelesDodgers {
+.logo-losangelesdodgers {
     background-position: 20% 75%;
 }
 
-.logo-MiamiMarlins {
+.logo-miamimarlins {
     background-position: 40% 75%;
 }
 
-.logo-MilwaukeeBrewers {
+.logo-milwaukeebrewers {
     background-position: 0 0;
 }
 
-.logo-MinnesotaTwins {
+.logo-minnesotatwins {
     background-position: 80% 0;
 }
 
-.logo-NewYorkMets {
+.logo-newyorkmets {
     background-position: 80% 25%;
 }
 
-.logo-NewYorkYankees {
+.logo-newyorkyankees {
     background-position: 80% 49%;
 }
 
-.logo-OaklandAthletics {
+.logo-oaklandathletics {
     background-position: 80% 75%;
 }
 
-.logo-PhiladelphiaPhillies {
+.logo-philadelphiaphillies {
     background-position: 0 99%;
 }
 
-.logo-PittsburghPirates {
+.logo-pittsburghpirates {
     background-position: 20% 99%;
 }
 
-.logo-StLouisCardinals {
+.logo-stlouiscardinals {
     background-position: 100% 0;
 }
 
-.logo-SanDiegoPadres {
+.logo-sandiegopadres {
     background-position: 40% 99%;
 }
 
-.logo-SanFranciscoGiants {
+.logo-sanfranciscogiants {
     background-position: 80% 99%;
 }
 
-.logo-SeattleMariners {
+.logo-seattlemariners {
     background-position: 60% 99%;
 }
 
-.logo-TampaBayRays {
+.logo-tampabayrays {
     background-position: 100% 25%;
 }
 
-.logo-TexasRangers {
+.logo-texasrangers {
     background-position: 100% 49%;
 }
 
-.logo-TorontoBlueJays {
+.logo-torontobluejays {
     background-position: 100% 75%;
 }
 
-.logo-WashingtonNationals {
+.logo-washingtonnationals {
     background-position: 100% 99%;
 }

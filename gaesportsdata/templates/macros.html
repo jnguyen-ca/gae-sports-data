@@ -6,10 +6,10 @@ Args:
   team (data_objects.Team)
   side (str) : used for html classes
 #}
-<div class="team-column team-{{ side }}">
+<div class="team-column team-{{ side|lower() }}">
   <div class="team-info">
     <span class="team-name">{{ team_display_name(sport, league, team.name) }}</span>
-    <span class="team-logo logo-{{ team.name|replace(' ','') }}"></span>
+    <span class="team-logo logo-{{ team.name|replace(' ','')|lower() }}"></span>
   </div>
   <div class="team-details">
     {% if team.moneyline_open %}

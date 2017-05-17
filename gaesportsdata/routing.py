@@ -15,6 +15,11 @@ import constants
 from . import app
 
 
+@app.url_value_preprocessor
+def preprocess_url_values(endpoint, values):
+    if app.url_map.is_endpoint_expecting(endpoint, 'league_id'):
+        values['league_id'] = values['league_id'].upper()
+
 @app.route('/')
 def frontpage():
     # aka navigation page
@@ -22,8 +27,6 @@ def frontpage():
 
 @app.route('/<league_id>')
 def league_page(league_id):
-    league_id = league_id.upper()
-    
     if league_id in constants.LEAGUE_ID_LIST:
         return flask.render_template('league_page.html', 
                                         league_title=league_id,
@@ -45,8 +48,6 @@ def scrape_all():
 
 @app.route('/scrape/<league_id>')
 def scrape_league(league_id):
-    league_id = league_id.upper()
-    
     start_date = flask.request.args.get('startDate', datetime.utcnow().strftime('%Y-%m-%d'))
     logging.info('Scraping '+league_id+' for '+start_date)
     
@@ -75,9 +76,9 @@ def scrape_league(league_id):
 
 @app.route('/scrape/details/<league_id>')
 def scrape_details(league_id):
-    league_id = league_id.upper()
-    
-    if league_id in constants.LEAGUE_ID_LIST:
+    if (league_id == constants.LEAGUE_ID_NHL
+        or league_id == constants.LEAGUE_ID_MLB
+    ):
         games = models.ApplicationVariable.get_app_var(league_id)
         VI = game_details.VegasInsider(league_id=league_id,games=games)
         models.ApplicationVariable.set_app_var(league_id, VI.fill_odds())

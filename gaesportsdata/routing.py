@@ -84,3 +84,10 @@ def scrape_details(league_id):
         models.ApplicationVariable.set_app_var(league_id, VI.fill_odds())
     
     return 'Completed!'
+
+@app.route('/appvars', methods=['GET', 'POST'])
+def appvars_page():
+    if flask.request.method == 'GET':
+        return flask.render_template('appvars.html', app_var_keys=constants.APPVAR_DISPLAY_LIST)
+    elif flask.request.method == 'POST':
+        pass

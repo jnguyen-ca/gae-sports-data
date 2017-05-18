@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% import "macros.html" as macros %}
+
+{% block title %}Application Variables{% endblock %}
+
+{% block content %}
+<div class="app-vars">
+  {% for app_var_key in app_var_keys %}
+    {% set app_var = get_app_var(app_var_key) %}
+  
+    {% if app_var %}
+    <div>
+   	  <div class="app-var">
+        <div class="app-title">
+          <span class="app-key">{{ app_var_key }}</span>
+        </div>
+        <div class="app-value">
+          {{ macros.display(app_var) }}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  {% endfor %}
+</div>
+{% endblock %}

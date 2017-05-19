@@ -8,7 +8,11 @@
 <script src="{{ url_for('static', filename='js/appvars.js') }}"></script>
 <script type="text/javascript">
 $(function() {
-	add_dict_controls($('#app-vars'), {{ is_admin()|tojson }});
+	var $app_vars = $('#app-vars')
+	
+	add_dict_controls($app_vars, {{ is_admin()|tojson }});
+	add_string_list_controls($app_vars, {{ is_admin()|tojson }});
+	$('.dict-level-0 .minimize-dict-level').trigger('click')
 });
 </script>
 {% endblock %}

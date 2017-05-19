@@ -1,14 +1,15 @@
-$spacing: 1rem;
+$static-spacing: 1rem;
 
 @mixin dict-level($level) {
 	.dict-level-#{$level} {
+		margin-top: 3px;
 		margin-left: 3vw * ($level + 1);
 	}
 }
 
 
 .app-var {
-	padding: $spacing;
+	padding: $static-spacing;
 }
 
 .app-value {
@@ -23,8 +24,13 @@ $spacing: 1rem;
 	@include dict-level($i);
 }
 
-.dict-entry {
-	margin: $spacing 0 $spacing ($spacing / 2);
+.dict-entries > * {
+	margin: $static-spacing 0 $static-spacing ($static-spacing / 2);
+}
+
+.dict-controls button {
+	background: transparent;
+	color: $site-font-color;
 }
 
 .dict-key {

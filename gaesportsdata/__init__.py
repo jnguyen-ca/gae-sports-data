@@ -17,3 +17,4 @@ app.jinja_env.lstrip_blocks = True
 
 import routing
 import context
+import appvars

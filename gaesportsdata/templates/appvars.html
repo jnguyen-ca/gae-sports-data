@@ -3,8 +3,18 @@
 
 {% block title %}Application Variables{% endblock %}
 
+{% block head %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="{{ url_for('static', filename='js/appvars.js') }}"></script>
+<script type="text/javascript">
+$(function() {
+	add_dict_controls($('#app-vars'), {{ is_admin()|tojson }});
+});
+</script>
+{% endblock %}
+
 {% block content %}
-<div class="app-vars">
+<div id="app-vars">
   {% for app_var_key in app_var_keys %}
     {% set app_var = get_app_var(app_var_key) %}
   
@@ -15,7 +25,7 @@
           <span class="app-key">{{ app_var_key }}</span>
         </div>
         <div class="app-value">
-          {{ macros.display(app_var) }}
+          {{ macros.display(value=app_var) }}
         </div>
       </div>
     </div>

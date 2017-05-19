@@ -10,6 +10,7 @@ import logging
 import models
 import game_info
 import game_details
+import appvars
 import constants
 
 from . import app
@@ -90,4 +91,4 @@ def appvars_page():
     if flask.request.method == 'GET':
         return flask.render_template('appvars.html', app_var_keys=constants.APPVAR_DISPLAY_LIST)
     elif flask.request.method == 'POST':
-        pass
+        return appvars.handle_request()

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from google.appengine.api import users
+
 import pytz
 
 from . import app
@@ -31,4 +33,9 @@ def list_processor():
         if key in constants.APPVAR_DISPLAY_LIST:
             return models.ApplicationVariable.get_app_var(key)
         return None
-    return dict(get_app_var=_get_app_var)
+    
+    def _is_admin():
+        return users.is_current_user_admin()
+        
+    return dict(get_app_var=_get_app_var,
+                is_admin=_is_admin)

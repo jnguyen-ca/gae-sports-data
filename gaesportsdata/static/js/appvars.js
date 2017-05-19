@@ -30,7 +30,7 @@ function get_ancestor_keys($entry) {
 function add_dict_controls($element, is_admin=false) {
 	// add control scripts for all nested dicts (important for ajax response)
 	var $dict_element = $element.find('.dict-entries')
-	var $dict_controls = $('<div></div>').addClass('dict-controls').prependTo($dict_element)
+	var $dict_controls = $('<div></div>').addClass('controls').addClass('dict-controls').prependTo($dict_element)
 	
 	if (is_admin) {
 		$('<button>Add Entry</button>')
@@ -53,7 +53,15 @@ function add_dict_controls($element, is_admin=false) {
 		.prop('type', 'button')
 		.addClass('minimize-dict-level')
 		.on('click', function() {
-			$(this).parent().nextAll().slideToggle();
+			var $this = $(this)
+			$this.parent().nextAll().slideToggle(400, function() {
+				if ( $(this).is(':visible') ) {
+					$this.text('Minimize')
+				}
+				else {
+					$this.text('Expand')
+				}
+			});
 		})
 		.appendTo($dict_controls)
 }

@@ -28,9 +28,16 @@ $static-spacing: 1rem;
 	margin: $static-spacing 0 $static-spacing ($static-spacing / 2);
 }
 
-.dict-controls button {
+.controls button {
 	background: transparent;
 	color: $site-font-color;
+	font-size: $responsive-font-size / 2;
+	margin: 0 6px;
+}
+
+.controls button:hover {
+	cursor: pointer;
+	background: $link-hover-bg-color;
 }
 
 .dict-key {
@@ -44,4 +51,8 @@ $static-spacing: 1rem;
 
 .list-entry {
 	padding: 0 3px;
+}
+
+.list-entry:not(:last-child) {
+	border-right: 1px solid white;
 }

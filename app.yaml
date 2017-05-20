@@ -3,6 +3,9 @@ api_version: 1
 threadsafe: true
 
 handlers:
+- url: /favicon\.ico
+  static_files: gaesportsdata/static/images/favicon.ico
+  upload: gaesportsdata/static/images/favicon\.ico
 - url: /static
   static_dir: gaesportsdata/static
 - url: /scrape.*

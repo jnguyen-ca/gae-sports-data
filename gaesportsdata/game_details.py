@@ -6,8 +6,9 @@ Requires existing data_object.Game objects filled out by game_info classes
 """
 
 
-from google.appengine.api import urlfetch
+from google.appengine.api import urlfetch, memcache
 from datetime import datetime, date
+import time
 import logging
 
 from lxml import etree
@@ -22,27 +23,33 @@ class VegasInsider(object):
     
     timezone = pytz.timezone('US/Eastern')
     
-    def __init__(self, league_id, games):
+    def __init__(self, league_id):
         """
         Args:
             league_id (string): a valid league_id from constants.py
-            games (list): list of existing data_object.Game
         """
         self.league_id = league_id
-        self.games = games
         
         # just in case app league id doesn't correspond to vi league id
         if self.league_id == constants.LEAGUE_ID_NHL:
             self.vi_league_id = 'nhl'
         elif self.league_id == constants.LEAGUE_ID_MLB:
             self.vi_league_id = 'mlb'
+        else:
+            raise ValueError('Invalid league id given')
             
-    def fill_odds(self):
-        """Scrapes odds from vegasinsider and fills corresponding games attributes"""
+    def fill_odds(self, games):
+        """Scrapes odds from vegasinsider and fills corresponding games attributes
+        Args:
+            games (list): list of existing data_object.Game
+        """
         
         odds_dict = self._scrape_odds()
         
-        for game in self.games:
+        for game in games:
+            
+            if game.league != self.league_id:
+                raise ValueError('mismatch league ids')
             
             vegas_odds = self._get_matching_odds(game, odds_dict['vegas'])
             if vegas_odds:
@@ -50,7 +57,7 @@ class VegasInsider(object):
                 game.teams.home.moneyline_open = vegas_odds['odds_team_home']
             #TODO: offshore
         
-        return self.games
+        return games
     
     def _get_matching_odds(self, game, odds_list):
         """Determine if game and odds_game refer to the same game
@@ -77,8 +84,10 @@ class VegasInsider(object):
         Returns:
             dict: values are self._scrape_game_odds_tree()
         """
+        if not memcache.add(type(self).__name__, True, 3):
+            time.sleep(3)
         logging.info('Scraping VegasInsider for %s' % (self.vi_league_id))
-        
+            
         url = "http://www.vegasinsider.com/%s/odds/las-vegas/" % (self.vi_league_id)
         response = urlfetch.fetch(url)
         vegas_tree = etree.fromstring(response.content, etree.HTMLParser())
@@ -90,8 +99,12 @@ class VegasInsider(object):
 
         vegas_odds_tree = vegas_tree.xpath('//body/table//*[contains(@class, "main-content-cell")]/table//*[contains(@class, "frodds-data-tbl")]//tr')
         
-        vegas_odds = self._scrape_game_odds_tree(vegas_odds_tree, 1)
+        try:
+            vegas_odds = self._scrape_game_odds_tree(vegas_odds_tree, 1)
 #         offshore_odds = self._scrape_game_odds_tree(offshore_tree, 8)
+        except IndexError as e:
+            logging.exception(e)
+            vegas_odds = {}
         
         return {
                 'vegas' : vegas_odds, 

@@ -2,14 +2,11 @@
 
 """Handles all app routing and rendering"""
 
-from datetime import datetime, timedelta
-import time
+from google.appengine.api.urlfetch_errors import DeadlineExceededError
 import flask
-import logging
 
 import models
-import game_info
-import game_details
+import scraper
 import appvars
 import constants
 
@@ -19,7 +16,8 @@ from . import app
 @app.url_value_preprocessor
 def preprocess_url_values(endpoint, values):
     if app.url_map.is_endpoint_expecting(endpoint, 'league_id'):
-        values['league_id'] = values['league_id'].upper()
+        if 'league_id' in values:
+            values['league_id'] = values['league_id'].upper()
 
 @app.route('/')
 def frontpage():
@@ -37,54 +35,43 @@ def league_page(league_id):
     return '404 Not Found', 404
 
 @app.route('/scrape-all')
-def scrape_all():
-    for league_id in constants.LEAGUE_ID_LIST:
-        scrape_league(league_id)
-        
-    for league_id in constants.LEAGUE_ID_LIST:
-        scrape_details(league_id)
-        time.sleep(5)
-        
-    return 'Done!'
-
 @app.route('/scrape/<league_id>')
-def scrape_league(league_id):
-    start_date = flask.request.args.get('startDate', datetime.utcnow().strftime('%Y-%m-%d'))
-    logging.info('Scraping '+league_id+' for '+start_date)
+def scrape_league(league_id=None):
+    details_only = flask.request.args.get('detailsOnly')
+    details_list = flask.request.args.get('details', '')
+    start_date = flask.request.args.get('startDate')
+    end_date = flask.request.args.get('endDate')
     
-    if league_id == constants.LEAGUE_ID_NHL:
-        end_date = flask.request.args.get('endDate', (datetime.strptime(start_date,'%Y-%m-%d') + timedelta(days=1)).strftime('%Y-%m-%d'))
-        
-        url = ("https://statsapi.web.nhl.com/api/v1/schedule?startDate=%s&endDate=%s"
-               "&expand=schedule.teams,schedule.linescore,schedule.broadcasts.all,team.leaders"
-               ",schedule.game.seriesSummary,seriesSummary.series&leaderCategories=points,goals"
-               ",assists&leaderGameTypes=P&site=en_nhlCA&teamId=&gameType=&timecode=") % (start_date, end_date)
-        
-        nhl_info = game_info.MLBAMAPI(url=url, league_id=constants.LEAGUE_ID_NHL)
-        models.ApplicationVariable.set_app_var(league_id, nhl_info.game_list)
-    elif league_id == constants.LEAGUE_ID_MLB:
-        url = ("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date=%s"
-               "&hydrate=team,linescore(matchup,runners),flags,liveLookin,broadcasts(all),"
-               "decisions,person,probablePitcher,stats,homeRuns,previousPlay,"
-               "game(content(media(featured,epg),summary),tickets)") % (start_date)
-        
-        mlb_info = game_info.MLBAMAPI(url=url, league_id=constants.LEAGUE_ID_MLB)
-        models.ApplicationVariable.set_app_var(league_id, mlb_info.game_list)
+    url_rule = flask.request.url_rule
+    if url_rule.rule.startswith('/scrape-all'):
+        league_list = constants.LEAGUE_ID_LIST
+        details_list = True
     else:
-        return '404 Not Found', 404
+        if league_id in constants.LEAGUE_ID_LIST:
+            league_list = [league_id]
+        else:
+            return '404 Not Found', 404
+        
+        details_list = [x.lower() for x in details_list.split(',')]
+        
+    for league_key in league_list:
+        scraper_object = scraper.Scraper(league_key)
+        
+        try:
+            if details_only:
+                game_list = models.ApplicationVariable.get_app_var(league_key)
+            else:
+                game_list = scraper_object.get_game_list(start_date, end_date)
+                models.ApplicationVariable.set_app_var(league_key, game_list)
+            
+            if details_list is True or 'odds' in details_list:
+                game_list = scraper_object.fill_game_odds(game_list)
+                models.ApplicationVariable.set_app_var(league_key, game_list)
+        except DeadlineExceededError:
+            # one of the sites probably temporarily down
+            pass
     
     return 'Success'
-
-@app.route('/scrape/details/<league_id>')
-def scrape_details(league_id):
-    if (league_id == constants.LEAGUE_ID_NHL
-        or league_id == constants.LEAGUE_ID_MLB
-    ):
-        games = models.ApplicationVariable.get_app_var(league_id)
-        VI = game_details.VegasInsider(league_id=league_id,games=games)
-        models.ApplicationVariable.set_app_var(league_id, VI.fill_odds())
-    
-    return 'Completed!'
 
 @app.route('/appvars', methods=['GET', 'POST'])
 def appvars_page():

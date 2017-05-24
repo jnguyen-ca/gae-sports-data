@@ -18,14 +18,14 @@ $static-spacing: 1rem;
 
 .dict-entries {
 	border-left: 2px dotted #B0BFCB;
+	
+	& > * {
+		margin: $static-spacing 0 $static-spacing ($static-spacing / 2);
+	}
 }
 
 @for $i from 0 through 5 {
 	@include dict-level($i);
-}
-
-.dict-entries > * {
-	margin: $static-spacing 0 $static-spacing ($static-spacing / 2);
 }
 
 .controls button {
@@ -33,11 +33,11 @@ $static-spacing: 1rem;
 	color: $site-font-color;
 	font-size: $responsive-font-size / 2;
 	margin: 0 6px;
-}
-
-.controls button:hover {
-	cursor: pointer;
-	background: $link-hover-bg-color;
+	
+	&:hover {
+		cursor: pointer;
+		background: $link-hover-bg-color;
+	}
 }
 
 .dict-key {
@@ -46,13 +46,19 @@ $static-spacing: 1rem;
 }
 
 .list-entries {
+	display: inline-block;
 	border: 1px solid white;
 }
 
 .list-entry {
 	padding: 0 3px;
+	
+	&:not(:last-child) {
+		border-right: 1px solid white;
+	}
 }
 
-.list-entry:not(:last-child) {
-	border-right: 1px solid white;
+.string-entry {
+	font-weight: light;
+	color: $secondary-site-font-color;
 }

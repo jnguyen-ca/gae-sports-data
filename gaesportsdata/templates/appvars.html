@@ -12,7 +12,10 @@ $(function() {
 	
 	add_dict_controls($app_vars, {{ is_admin()|tojson }});
 	add_string_list_controls($app_vars, {{ is_admin()|tojson }});
-	$('.dict-level-0 .minimize-dict-level').trigger('click')
+	
+	if (window.innerWidth < 768) {
+		$('.dict-level-0 .minimize-dict-level').trigger('click')
+	}
 });
 </script>
 {% endblock %}
@@ -37,3 +40,5 @@ $(function() {
   {% endfor %}
 </div>
 {% endblock %}
+
+{% block appvars %}{% endblock %}

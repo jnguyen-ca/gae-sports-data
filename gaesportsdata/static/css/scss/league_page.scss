@@ -2,6 +2,10 @@
 	text-align: center;
 }
 
+.games {
+	min-width: 66rem;
+}
+
 .game-row:hover {
 	background-color: $row-hover-bg-color;
 }
@@ -12,11 +16,11 @@
 
 .game-time {
 	font-weight: lighter;
-	color: #ccc;
+	color: $secondary-site-font-color;
 }
 
 .team-column {
-	flex-basis: 30vw;
+	flex-basis: 25rem;
 	padding-left: 1vw;
 }
 

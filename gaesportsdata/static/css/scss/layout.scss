@@ -15,12 +15,16 @@ body {
 .row {
 	display: flex;
 	justify-content: space-around;
+	
+	.home-navigation & {
+		flex-wrap: wrap;
+	}
 }
 
 .home-navigation {
 	margin: 0 auto;
 	max-width: 450px;
-	padding-top: 6rem;
+	padding-top: 12vh;
 }
 
 a.text-icon {
@@ -32,13 +36,32 @@ a.text-icon {
 	background-color: transparent;
 	border: 1px solid #FFF;
 	border-radius: 15%;
-	width: 9rem;
-	height: 9rem;
-	font-size: 3rem;
-	line-height: 8rem;
+	
+	&:hover {
+		background-color: $link-hover-bg-color;
+		border-color: darken($link-hover-bg-color, 15%)
+	}
 }
 
-a.text-icon:hover {
-	background-color: $link-hover-bg-color;
-	border-color: #2aabd2;
+.league-icon .text-icon {
+	width: 3 * $responsive-font-size;
+	height: 3 * $responsive-font-size;
+	line-height: 3 * $responsive-font-size - 1;
 }
+
+.appvars-link {
+	position: absolute;
+	top: 3vh;
+	right: 3vw;
+	
+	.text-icon {
+		width: $responsive-font-size;
+		height: $responsive-font-size;
+		line-height: $responsive-font-size;
+	}
+	
+	@media (max-width: 575px) {
+		display: none;
+	}
+}
+

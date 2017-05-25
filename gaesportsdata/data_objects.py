@@ -16,14 +16,22 @@ class Game(object):
             league_id (str): valid league id
         """
         
-        self._set_sport_and_league(league_id.upper())
+        self._league = league_id.upper()
+        if self.league not in constants.LEAGUE_ID_LIST:
+            raise ValueError('Invalid league ID')
+        
+        if self.league == constants.LEAGUE_ID_NHL:
+            self._sport = 'Hockey'
+        elif self.league == constants.LEAGUE_ID_MLB:
+            self._sport = 'Baseball'
+            
         self._datetime = None
         self._teams = Teams(self)
     
+    # sport and league are properties because don't want to allow them to be changed after initialization (i.e. no setters)
     @property
     def sport(self):
         return self._sport
-    
     @property
     def league(self):
         return self._league
@@ -46,15 +54,6 @@ class Game(object):
             raise ValueError('Must be Teams')
         self._teams = value
         
-    def _set_sport_and_league(self, league_id):
-        if league_id not in constants.LEAGUE_ID_LIST:
-            raise ValueError('Invalid league ID')
-        
-        self._league = league_id
-        if league_id == constants.LEAGUE_ID_NHL:
-            self._sport = 'Hockey'
-        elif league_id == constants.LEAGUE_ID_MLB:
-            self._sport = 'Baseball'
         
 class Teams(object):
     def __init__(self, game):
@@ -97,8 +96,7 @@ class Team(object):
         
         self._name = None
         
-        self.score = None
-        
+        # TODO: create property to limit formatting of odds (either moneyline or decimal)
         self.moneyline_open = None
         self.moneyline = None
         
@@ -110,21 +108,8 @@ class Team(object):
         name_id = self.get_team_id(self.game.sport, self.game.league, value)
         if name_id:
             self._name = name_id
-        self._name = value
-    
-    @staticmethod
-    def is_matching_team(sport, league, name1, name2):
-        if name1.upper() == name2.upper():
-            return True
-        
-        name1_key = Team.get_team_id(sport, league, name1)
-        name2_key = Team.get_team_id(sport, league, name2)
-        if (name1_key
-            and name1_key == name2_key
-        ):
-            return True
-        
-        return False
+        else:
+            self._name = value
     
     @staticmethod
     def get_team_id(sport, league, name):

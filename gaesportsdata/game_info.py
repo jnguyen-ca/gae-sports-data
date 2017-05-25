@@ -31,24 +31,24 @@ class MLBAMAPI(object):
             start_date (datetime|string): date string in iso 8601 format
             end_date (datetime|string): date string in iso 8601 format
         """
-        self.league_id = league_id
+        self.league = league_id
         
         response = urlfetch.fetch(self.get_url(start_date, end_date))
         self.response_dict = json.loads(response.content)
         self.game_list = self.fill_data()
     
     @property
-    def league_id(self):
-        return self._league_id
-    @league_id.setter
-    def league_id(self, value):
+    def league(self):
+        return self._league
+    @league.setter
+    def league(self, value):
         if (value not in [
                          constants.LEAGUE_ID_MLB,
                          constants.LEAGUE_ID_NHL,
                          ]
         ):
             raise ValueError('invalid league id for mlb advanced media api')
-        self._league_id = value
+        self._league = value
     
     def get_url(self, start_date, end_date):
         """Returns appropriate url for given league id
@@ -72,13 +72,13 @@ class MLBAMAPI(object):
         if isinstance(start_date, datetime):
             start_date = start_date.strftime('%Y-%m-%d')
         
-        logging.info("Requesting %s for %s until %s" % (self.league_id, start_date, end_date))
-        if self.league_id == constants.LEAGUE_ID_NHL:
+        logging.info("Requesting %s for %s until %s" % (self.league, start_date, end_date))
+        if self.league == constants.LEAGUE_ID_NHL:
             url = ("https://statsapi.web.nhl.com/api/v1/schedule?startDate=%s&endDate=%s"
                    "&expand=schedule.teams,schedule.linescore,schedule.broadcasts.all,team.leaders"
                    ",schedule.game.seriesSummary,seriesSummary.series&leaderCategories=points,goals"
                    ",assists&leaderGameTypes=P&site=en_nhlCA&teamId=&gameType=&timecode=") % (start_date, end_date)
-        elif self.league_id == constants.LEAGUE_ID_MLB:
+        elif self.league == constants.LEAGUE_ID_MLB:
             url = ("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date=%s"
                    "&hydrate=team,linescore(matchup,runners),flags,liveLookin,broadcasts(all),"
                    "decisions,person,probablePitcher,stats,homeRuns,previousPlay,"
@@ -95,7 +95,7 @@ class MLBAMAPI(object):
         games = []
         for date_data in self.response_dict['dates']:
             for game_dict in date_data['games']:
-                game = data_objects.Game(self.league_id)
+                game = data_objects.Game(self.league)
                 game.datetime = datetime.strptime(game_dict['gameDate'],'%Y-%m-%dT%H:%M:%SZ')
         
                 # Not using yet so commented out
@@ -107,9 +107,12 @@ class MLBAMAPI(object):
                 game.teams.away.name = game_dict['teams']['away']['team']['name']
                 game.teams.home.name = game_dict['teams']['home']['team']['name']
                 
-                if self.league_id == constants.LEAGUE_ID_MLB:
-                    game.teams.away.pitcher = game_dict['teams']['away']['probablePitcher']['fullName']
-                    game.teams.home.pitcher = game_dict['teams']['home']['probablePitcher']['fullName']
+                try:
+                    if self.league == constants.LEAGUE_ID_MLB:
+                        game.teams.away.pitcher = {'name' : game_dict['teams']['away']['probablePitcher']['fullName']}
+                        game.teams.home.pitcher = {'name' : game_dict['teams']['home']['probablePitcher']['fullName']}
+                except KeyError:
+                    pass
                 
                 games.append(game)
                 

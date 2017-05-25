@@ -4,6 +4,7 @@
 
 from google.appengine.api.urlfetch_errors import DeadlineExceededError
 import flask
+import logging
 
 import models
 import scraper
@@ -11,7 +12,6 @@ import appvars
 import constants
 
 from . import app
-
 
 @app.url_value_preprocessor
 def preprocess_url_values(endpoint, values):
@@ -58,18 +58,17 @@ def scrape_league(league_id=None):
         scraper_object = scraper.Scraper(league_key)
         
         try:
-            if details_only:
-                game_list = models.ApplicationVariable.get_app_var(league_key)
-            else:
-                game_list = scraper_object.get_game_list(start_date, end_date)
-                models.ApplicationVariable.set_app_var(league_key, game_list)
+            if not details_only:
+                scraper_object.fill_game_list(start_date, end_date)
             
             if details_list is True or 'odds' in details_list:
-                game_list = scraper_object.fill_game_odds(game_list)
-                models.ApplicationVariable.set_app_var(league_key, game_list)
-        except DeadlineExceededError:
+                scraper_object.fill_game_odds()
+                
+            if details_list is True or 'pitchers' in details_list:
+                scraper_object.fill_pitchers()
+        except DeadlineExceededError as e:
             # one of the sites probably temporarily down
-            pass
+            logging.exception(e)
     
     return 'Success'
 

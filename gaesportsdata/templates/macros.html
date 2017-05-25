@@ -11,8 +11,22 @@ Args:
   </div>
   <div class="team-details">
     {% if team.moneyline_open %}
-	<span class="label">Open:</span>
-	<span class="team-moneyline-open">{{ team.moneyline_open }}</span>
+    <div class="detail">
+	  <span class="label">Open:</span>
+	  <span class="value">{{ team.moneyline_open }}</span>
+	</div>
+	{% endif %}
+	{% if team.pitcher %}
+	<div class="detail">
+	  <span class="label">Pitcher:</span>
+	  <span class="value">
+	  	{% if team.pitcher.ranking %}
+	  	<span class="ranking">({{ team.pitcher.ranking }})</span>
+	  	{% endif %}
+	    <span class="pitcher-name">{{ team.pitcher.name }}</span> 
+	    <span class="npera">{{ team.pitcher.npera }}</span>
+	  </span>
+	</div>
 	{% endif %}
   </div>
 </div>

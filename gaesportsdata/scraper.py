@@ -26,7 +26,7 @@ class Scraper(object):
         return self._league
     @league.setter
     def league(self, value):
-        if self.league not in constants.LEAGUE_ID_LIST:
+        if value not in constants.LEAGUE_ID_LIST:
             return ValueError('invalid league')
         self._league = value
         

@@ -41,4 +41,8 @@ $(function() {
 </div>
 {% endblock %}
 
-{% block appvars %}{% endblock %}
+{% block appvars %}
+  {% if is_admin() == false and is_logged_in() == false %}
+  <a class="text-icon" href="{{ login_link(url_for('appvars_page')) }}">Login</a>
+  {% endif %}
+{% endblock %}

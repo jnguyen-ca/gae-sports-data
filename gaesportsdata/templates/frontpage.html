@@ -8,7 +8,7 @@
   
     {% for league in leagues %}
     <div class="col league-icon">
-      <a class="text-icon {{ league|lower() }}-icon" href="{{ league }}">{{ league }}</a>
+      <a class="text-icon {{ league|lower() }}-icon" href="{{ url_for('league_page', league_id=league) }}">{{ league }}</a>
     </div>
   
       {% if loop.index is divisibleby(2) and not loop.last %}

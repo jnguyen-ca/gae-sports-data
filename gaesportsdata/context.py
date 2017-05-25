@@ -28,14 +28,24 @@ def team_processor():
     return dict(team_display_name=_team_display_name)
 
 @app.context_processor
-def list_processor():
+def sys_processor():
     def _get_app_var(key):
         if key in constants.APPVAR_DISPLAY_LIST:
             return models.ApplicationVariable.get_app_var(key)
         return None
     
+    def _is_logged_in():
+        if users.get_current_user():
+            return True
+        return False
+    
     def _is_admin():
         return users.is_current_user_admin()
+    
+    def _login_link(endpoint):
+        return users.create_login_url(endpoint)
         
     return dict(get_app_var=_get_app_var,
-                is_admin=_is_admin)
+                is_logged_in=_is_logged_in,
+                is_admin=_is_admin,
+                login_link=_login_link)

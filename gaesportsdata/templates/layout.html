@@ -18,10 +18,10 @@
     <div class="container">
       {% block content %}{% endblock %}
     </div>
-    {% block appvars %}
     <span class="appvars-link">
-    	<a class="text-icon" href="/appvars">Vars</a>
+      {% block appvars %}
+    	<a class="text-icon" href="{{ url_for('appvars_page') }}">Vars</a>
+      {% endblock %}
     </span>
-    {% endblock %}
   </body>
 </html>

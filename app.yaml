@@ -19,3 +19,5 @@ libraries:
   version: latest
 - name: lxml
   version: latest
+- name: pytz
+  version: latest

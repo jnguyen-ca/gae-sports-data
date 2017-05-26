@@ -1,2 +1,4 @@
 Flask==0.12.1
 jsonpickle
+beautifulsoup4
+html5lib

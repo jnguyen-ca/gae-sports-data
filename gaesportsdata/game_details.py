@@ -187,24 +187,36 @@ class USAToday(object):
             raise ValueError('usatoday only supports mlb')
         
         ratings = self._request()
-        
         for game in games:
-            if (not hasattr(game.teams.home, 'pitcher')
-                and not hasattr(game.teams.away, 'pitcher')
-            ):
+            try:
+                home_pitcher_exists = True if game.teams.home.pitcher else False
+            except AttributeError:
+                home_pitcher_exists = False 
+            try:
+                away_pitcher_exists = True if game.teams.away.pitcher else False
+            except AttributeError:
+                away_pitcher_exists = False 
+                
+            if home_pitcher_exists is False and away_pitcher_exists is False:
                 continue
             
             for rating in ratings:
                 if (rating['team'] == game.teams.home.name
-                    and game.teams.home.pitcher
+                    and home_pitcher_exists
                     and rating['name'] == game.teams.home.pitcher['name']
                 ):
                     game.teams.home.pitcher = rating
+                    home_pitcher_exists = False
+                    if away_pitcher_exists is False:
+                        break
                 elif (rating['team'] == game.teams.away.name
-                    and game.teams.away.pitcher
+                    and away_pitcher_exists
                     and rating['name'] == game.teams.away.pitcher['name']
                 ):
                     game.teams.away.pitcher = rating
+                    away_pitcher_exists = False
+                    if home_pitcher_exists is False:
+                        break
         
         return games
     
@@ -235,14 +247,14 @@ class USAToday(object):
         Returns:
             list
         """
-        
         soup = BeautifulSoup(htmlstring, 'html5lib')
         results = []
         
-        # len 4, index 3 contains content after <b>endfile</b> in div[class="sagarin-page"]
-        ratings = soup.find('div', {'class' : 'sagarin-page'}).contents[3]
+        ratings = soup.find('div', {'class' : 'sagarin-page'})
         # gets all the "yyyy x League Batters/Pitchers thru..." sections, should be 60 of them (2 for each team)
         ratings = ratings.find_all('pre')
+        # first is empty, second is league-wide team data
+        ratings = ratings[2:]
         
         for rating_section in ratings:
             # get the first string iteration which will contain the section header (i.e. "yyyy x League Batters/Pitchers thru...")
@@ -266,7 +278,7 @@ class USAToday(object):
                 team_id = data_objects.Team.get_team_id(self.sport, self.league, team_abbr)
                 
                 results.append({
-                                'ranking' : ' '.join(ranking.split()),
+                                'ranking' : ranking.replace(' ',''),
                                 'name' : first_name+' '+last_name,
                                 'team' : team_id,
                                 'handedness' : handedness,

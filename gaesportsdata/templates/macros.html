@@ -6,8 +6,8 @@ Args:
 #}
 <div class="team-column team-{{ side|lower() }}">
   <div class="team-info">
-    <span class="team-name">{{ team_display_name(team.game.sport, team.game.league, team.name) }}</span>
     <span class="team-logo logo-{{ team.name|replace(' ','')|lower() }}"></span>
+    <span class="team-name">{{ team_display_name(team.game.sport, team.game.league, team.name) }}</span>
   </div>
   <div class="team-details">
     {% if team.moneyline_open %}

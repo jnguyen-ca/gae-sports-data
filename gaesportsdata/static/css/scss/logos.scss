@@ -2,13 +2,13 @@ $mlb-column-0: 0; $mlb-column-1: 20%; $mlb-column-2: 40%; $mlb-column-3: 60%; $m
 $mlb-row-0: 1%; $mlb-row-1: 25.5%; $mlb-row-2: 50%; $mlb-row-3: 75%; $mlb-row-4: 99%;
 
 .team-logo {
-	display: inline-block;
 	height: $responsive-font-size;
 	width: $responsive-font-size;
 	background-repeat: no-repeat;
 }
 
 .mlb-games .team-logo {
+	display: inline-block;
 	background-image: url("../images/mlblogos.png");
 	background-size: 600% 550%;
 }

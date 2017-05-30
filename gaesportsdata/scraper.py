@@ -27,7 +27,7 @@ class Scraper(object):
         return self._league
     @league.setter
     def league(self, value):
-        if value not in constants.LEAGUE_ID_LIST:
+        if value not in constants.LEAGUE_SPORT_MAP:
             return ValueError('invalid league')
         self._league = value
         
@@ -47,7 +47,7 @@ class Scraper(object):
         if not end_date:
             if not isinstance(start_date, datetime):
                 start_date = datetime.strptime(start_date,'%Y-%m-%d')
-            end_date = (start_date + timedelta(days=3)).strftime('%Y-%m-%d')
+            end_date = (start_date + timedelta(days=1)).strftime('%Y-%m-%d')
             
         if isinstance(start_date, datetime):
             start_date = start_date.strftime('%Y-%m-%d')
@@ -77,7 +77,7 @@ class Scraper(object):
                                ]
         ):
             VI = game_details.VegasInsider()
-            VI.fill_odds(self.game_list)
+            VI.fill(self.game_list)
             models.ApplicationVariable.set_app_var(self.league, self.game_list)
             
         return self.game_list

@@ -17,15 +17,10 @@ class Game(object):
         """
         
         self._league = league_id.upper()
-        if self.league not in constants.LEAGUE_ID_LIST:
+        if self.league not in constants.LEAGUE_SPORT_MAP:
             raise ValueError('Invalid league ID')
         
-        if self.league == constants.LEAGUE_ID_NHL:
-            self._sport = 'Hockey'
-        elif self.league == constants.LEAGUE_ID_MLB:
-            self._sport = 'Baseball'
-        elif self.league == constants.LEAGUE_ID_NBA:
-            self._sport = 'Basketball'
+        self._sport = constants.LEAGUE_SPORT_MAP[self.league]
             
         self._datetime = None
         self._teams = Teams(self)

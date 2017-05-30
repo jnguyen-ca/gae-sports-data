@@ -5,11 +5,11 @@ LEAGUE_ID_MLB = 'MLB'
 LEAGUE_ID_NBA = 'NBA'
 
 # contains all league ids for looping
-LEAGUE_ID_LIST = [
-                  LEAGUE_ID_NHL,
-                  LEAGUE_ID_MLB,
-                  LEAGUE_ID_NBA,
-                  ]
+LEAGUE_SPORT_MAP = {
+                    LEAGUE_ID_NHL : 'Hockey',
+                    LEAGUE_ID_MLB : 'Baseball',
+                    LEAGUE_ID_NBA : 'Basketball',
+                    }
 
 APPVAR_TEAM_NAMES_KEY = 'Team Names'
 

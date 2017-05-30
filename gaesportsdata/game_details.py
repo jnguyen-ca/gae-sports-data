@@ -25,22 +25,7 @@ class VegasInsider(object):
     
     timezone = pytz.timezone('US/Eastern')
     
-    @property
-    def league(self):
-        return self._league
-    @league.setter
-    def league(self, value):
-        # just in case app league id doesn't correspond to vi league id
-        if value == constants.LEAGUE_ID_NHL:
-            self.vi_league = 'nhl'
-        elif value == constants.LEAGUE_ID_MLB:
-            self.vi_league = 'mlb'
-        else:
-            raise ValueError('Invalid league id given')
-        
-        self._league = value
-    
-    def fill_odds(self, games):
+    def fill(self, games):
         """Scrapes odds from vegasinsider and fills corresponding games attributes
         Args:
             games (list): list of existing data_object.Game
@@ -53,7 +38,7 @@ class VegasInsider(object):
         except IndexError:
             return games
         
-        odds_dict = self._request_odds()
+        odds_dict = self._request()
         
         for game in games:
             vegas_odds = self._get_matching_odds(game, odds_dict['vegas'])
@@ -68,9 +53,9 @@ class VegasInsider(object):
         """Determine if game and odds_game refer to the same game
         Args:
             game (Game): 
-            odds_list (list): list of odds from self._scrape_game_odds_tree
+            odds_list (list): list of odds from self._scrape
         Returns:
-            dict: individual game from self._scrape_game_odds_tree
+            dict: individual game from self._scrape
         """
         
         converted_game_datetime = game.datetime.replace(tzinfo=pytz.utc).astimezone(self.timezone)
@@ -83,17 +68,17 @@ class VegasInsider(object):
                     return odds_game
         return None
     
-    def _request_odds(self):
+    def _request(self):
         """Makes requests to vegasinsider odds pages to get game odds
         
         Returns:
-            dict: values are self._scrape_game_odds_tree()
+            dict: values are self._scrape()
         """
         if not memcache.add(type(self).__name__, True, 3):
             time.sleep(3)
-        logging.info('Scraping VegasInsider for %s' % (self.vi_league))
+        logging.info('Scraping VegasInsider for %s' % (self.league))
             
-        url = "http://www.vegasinsider.com/%s/odds/las-vegas/" % (self.vi_league)
+        url = "http://www.vegasinsider.com/%s/odds/las-vegas/" % (self.league)
         response = urlfetch.fetch(url)
 
 #         time.sleep(3)
@@ -102,8 +87,8 @@ class VegasInsider(object):
 #         offshore_tree = etree.fromstring(response.content, etree.HTMLParser())
 
         try:
-            vegas_odds = self._scrape_game_odds_tree(response.content, 1)
-#         offshore_odds = self._scrape_game_odds_tree(offshore_tree, 8)
+            vegas_odds = self._scrape(response.content, 1)
+#         offshore_odds = self._scrape(offshore_tree, 8)
         except IndexError as e:
             logging.exception(e)
             vegas_odds = {}
@@ -113,8 +98,8 @@ class VegasInsider(object):
 #                 'offshore' : offshore_odds
                 }
     
-    def _scrape_game_odds_tree(self, htmlstring, odds_column=1):
-        """See self._request_odds()
+    def _scrape(self, htmlstring, odds_column=1):
+        """See self._request()
         
         Args:
             htmlstring (string): response string

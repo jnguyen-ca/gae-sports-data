@@ -22,11 +22,11 @@ def preprocess_url_values(endpoint, values):
 @app.route('/')
 def frontpage():
     # aka navigation page
-    return flask.render_template('frontpage.html', leagues=constants.LEAGUE_ID_LIST)
+    return flask.render_template('frontpage.html', leagues=constants.LEAGUE_SPORT_MAP.keys())
 
 @app.route('/<league_id>')
 def league_page(league_id):
-    if league_id in constants.LEAGUE_ID_LIST:
+    if league_id in constants.LEAGUE_SPORT_MAP:
         return flask.render_template('league_page.html', 
                                         league_title=league_id,
                                         games=models.ApplicationVariable.get_app_var(league_id)
@@ -44,10 +44,10 @@ def scrape_league(league_id=None):
     
     url_rule = flask.request.url_rule
     if url_rule.rule.startswith('/scrape-all'):
-        league_list = constants.LEAGUE_ID_LIST
+        league_list = constants.LEAGUE_SPORT_MAP.keys()
         details_list = True
     else:
-        if league_id in constants.LEAGUE_ID_LIST:
+        if league_id in constants.LEAGUE_SPORT_MAP:
             league_list = [league_id]
         else:
             return '404 Not Found', 404

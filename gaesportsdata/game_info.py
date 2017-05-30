@@ -6,7 +6,7 @@ and initializing their respective data_objects.Game() objects
 """
 
 from google.appengine.api import urlfetch
-from datetime import datetime, timedelta
+from datetime import datetime
 import json
 import logging
 
@@ -14,89 +14,77 @@ import data_objects
 import constants
 
 
-class MLBAMAPI(object):
-    """To retrieve data from MLB Advanced Media API"""
-    
-    GAME_STATUS_SCHEDULED = 'Scheduled'
-    GAME_STATUS_PENDING = 'In Progress'
-    GAME_STATUS_FINAL = 'Final'
-    
-    GAME_TYPE_REGULAR = 'R'
-    GAME_TYPE_PLAYOFFS = 'P'
-    
-    def __init__(self, league_id, start_date=None, end_date=None):
+class GameInfo(object):
+    def __init__(self, league_id, start_date, end_date):
         """
         Args:
             league_id (string): a valid league_id from constants.py
-            start_date (datetime|string): date string in iso 8601 format
-            end_date (datetime|string): date string in iso 8601 format
+            start_date (string): date string in iso 8601 format
+            end_date (string): date string in iso 8601 format
         """
         self.league = league_id
+        self.start_date = start_date
+        self.end_date = end_date
         
-        response = urlfetch.fetch(self.get_url(start_date, end_date))
+        logging.info("Requesting %s for %s until %s" % (self.league, self.start_date, self.end_date))
+        response = urlfetch.fetch(self.url)
         self.response_dict = json.loads(response.content)
-        self.game_list = self.fill_data()
+        
+        self.game_list = self.parse_game_list()
+        
+    def valid_date(self, game_datetime):
+        if (game_datetime.date() >= datetime.strptime(self.start_date,'%Y-%m-%d').date()
+            and game_datetime.date() <= datetime.strptime(self.end_date,'%Y-%m-%d').date()
+        ):
+            return True
+        return False
+
+class MLBAMAPI(GameInfo):
+    """To retrieve data from MLB Advanced Media API"""
+    
+#     GAME_STATUS_SCHEDULED = 'Scheduled'
+#     GAME_STATUS_PENDING = 'In Progress'
+#     GAME_STATUS_FINAL = 'Final'
+#     
+#     GAME_TYPE_REGULAR = 'R'
+#     GAME_TYPE_PLAYOFFS = 'P'
     
     @property
-    def league(self):
-        return self._league
-    @league.setter
-    def league(self, value):
-        if (value not in [
-                         constants.LEAGUE_ID_MLB,
-                         constants.LEAGUE_ID_NHL,
-                         ]
-        ):
-            raise ValueError('invalid league id for mlb advanced media api')
-        self._league = value
-    
-    def get_url(self, start_date, end_date):
+    def url(self):
         """Returns appropriate url for given league id
         
-        Args:
-            start_date (datetime|string): date string in iso 8601 format
-            end_date (datetime|string): date string in iso 8601 format
         Returns:
             string
         """
-        if not start_date:
-            start_date = datetime.utcnow()
-        
-        if not end_date:
-            if not isinstance(start_date, datetime):
-                start_date = datetime.strptime(start_date,'%Y-%m-%d')
-            end_date = (start_date + timedelta(days=1)).strftime('%Y-%m-%d')
-        elif isinstance(end_date, datetime):
-            end_date = end_date.strftime('%Y-%m-%d')
-            
-        if isinstance(start_date, datetime):
-            start_date = start_date.strftime('%Y-%m-%d')
-        
-        logging.info("Requesting %s for %s until %s" % (self.league, start_date, end_date))
         if self.league == constants.LEAGUE_ID_NHL:
             url = ("https://statsapi.web.nhl.com/api/v1/schedule?startDate=%s&endDate=%s"
                    "&expand=schedule.teams,schedule.linescore,schedule.broadcasts.all,team.leaders"
                    ",schedule.game.seriesSummary,seriesSummary.series&leaderCategories=points,goals"
-                   ",assists&leaderGameTypes=P&site=en_nhlCA&teamId=&gameType=&timecode=") % (start_date, end_date)
+                   ",assists&leaderGameTypes=P&site=en_nhlCA&teamId=&gameType=&timecode=") % (self.start_date, self.end_date)
         elif self.league == constants.LEAGUE_ID_MLB:
             url = ("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date=%s"
                    "&hydrate=team,linescore(matchup,runners),flags,liveLookin,broadcasts(all),"
                    "decisions,person,probablePitcher,stats,homeRuns,previousPlay,"
-                   "game(content(media(featured,epg),summary),tickets)") % (start_date)
+                   "game(content(media(featured,epg),summary),tickets)") % (self.start_date)
+        else:
+            raise ValueError('invalid league id for mlb advanced media api')
                    
         return url
         
-    def fill_data(self):
+    def parse_game_list(self):
         """Parses response data into structured objects
         
         Returns:
-            list: empty or list of data_objects.Game objects
+            list: list of data_objects.Game objects
         """
         games = []
         for date_data in self.response_dict['dates']:
             for game_dict in date_data['games']:
                 game = data_objects.Game(self.league)
                 game.datetime = datetime.strptime(game_dict['gameDate'],'%Y-%m-%dT%H:%M:%SZ')
+                
+                if not self.valid_date(game.datetime):
+                    continue
         
                 # Not using yet so commented out
 #                 game.type = game_dict['gameType']
@@ -116,4 +104,26 @@ class MLBAMAPI(object):
                 
                 games.append(game)
                 
+        return games
+    
+class NBA(GameInfo):
+    @property
+    def url(self):
+        return "https://watch.nba.com/schedule?date=%s&format=json" % (self.start_date)
+    
+    def parse_game_list(self):
+        games = []
+        
+        for game_dict in self.response_dict['games']:
+            game = data_objects.Game(self.league)
+            game.datetime = datetime.strptime(game_dict['dateTimeGMT'],'%Y-%m-%dT%H:%M:%S.000')
+            
+            if not self.valid_date(game.datetime):
+                continue
+        
+            game.teams.away.name = game_dict['awayTeam']['name']
+            game.teams.home.name = game_dict['homeTeam']['name']
+            
+            games.append(game)
+        
         return games

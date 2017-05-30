@@ -2,6 +2,7 @@
 
 """Handles all scraping requests"""
 
+from datetime import datetime, timedelta
 
 import game_info
 import game_details
@@ -35,19 +36,33 @@ class Scraper(object):
     def fill_game_list(self, start_date, end_date):
         """
         Args:
-            start_date (datetime|string): date string in iso 8601 format
-            end_date (datetime|string): date string in iso 8601 format
+            start_date (string): date string in iso 8601 format, defaults to current utc date
+            end_date (string): date string in iso 8601 format, defaults to 1 day from start_date
         Returns:
             list of data_objects.Game
         """
+        if not start_date:
+            start_date = datetime.utcnow()
+        
+        if not end_date:
+            if not isinstance(start_date, datetime):
+                start_date = datetime.strptime(start_date,'%Y-%m-%d')
+            end_date = (start_date + timedelta(days=3)).strftime('%Y-%m-%d')
+            
+        if isinstance(start_date, datetime):
+            start_date = start_date.strftime('%Y-%m-%d')
+        
         if (self.league in [
                                constants.LEAGUE_ID_MLB,
                                constants.LEAGUE_ID_NHL,
                                ]
         ):
             info = game_info.MLBAMAPI(self.league, start_date, end_date)
-            self.game_list = info.game_list
-            models.ApplicationVariable.set_app_var(self.league, self.game_list)
+        elif self.league == constants.LEAGUE_ID_NBA:
+            info = game_info.NBA(self.league, start_date, end_date)
+            
+        self.game_list = info.game_list
+        models.ApplicationVariable.set_app_var(self.league, self.game_list)
             
         return self.game_list
     

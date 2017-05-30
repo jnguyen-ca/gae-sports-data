@@ -24,6 +24,8 @@ class Game(object):
             self._sport = 'Hockey'
         elif self.league == constants.LEAGUE_ID_MLB:
             self._sport = 'Baseball'
+        elif self.league == constants.LEAGUE_ID_NBA:
+            self._sport = 'Basketball'
             
         self._datetime = None
         self._teams = Teams(self)
